@@ -1,5 +1,5 @@
 from table_manager import *
-3
+
 running = True
 while running:
     print('press 1 to add entry to items')
