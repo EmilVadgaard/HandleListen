@@ -9,9 +9,10 @@ const pool = createPool({
     database: "shoppinglist"
 })
 
+
 pool.query(`SELECT * FROM items`, (err, result, fields) =>{
     if (err) {
         return console.log(err);
     }
-    return console.log(result);
+    return console.log(result[1]);
 })
