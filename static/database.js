@@ -1,10 +1,10 @@
 const {
     createPool
-} = require('mysql');
+} = require('mysql2');
 
 const pool = createPool({
     host: "localhost",
-    user: "roos",
+    user: "root",
     password: "Djq97hyy",
     database: "shoppinglist"
 })
