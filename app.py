@@ -50,6 +50,8 @@ with app.app_context():
 # Forms -----------------------------------------------------------------------
 class RecipeForm(Form):
   name = StringField( label='Recipe Name', validators=[DataRequired(), Length(min=1, max=100) ] )
+  amount = IntegerField( label='Amount', validators=[DataRequired()], default = 0 )
+  unit = SelectField( label='Unit', choices=[('g', 'grams'), ('kg', 'kilograms'), ('ml', 'milliliters'), ('l', 'liters'), ('tsp', 'teaspoon'), ('tbsp', 'tablespoon'), ('cup', 'cup'), ('pcs', 'pieces')] )
   
   submit = SubmitField('Add Recipe')
 
@@ -60,7 +62,7 @@ class IngredientForm(Form):
 
 # Routes ----------------------------------------------------------------------
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
     return "Hello, World!"
 
