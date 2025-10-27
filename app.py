@@ -14,6 +14,7 @@ app.config['SECRET_KEY'] = "change-me"
 
 db = SQLAlchemy(app)
 
+
 # Data Model ------------------------------------------------------------------
 
 class RecipeToIngredient(db.Model):
@@ -61,11 +62,33 @@ class RecipeForm(Form):
   submit = SubmitField('Add Recipe')
 
 class IngredientForm(Form):
+  parent: RecipeForm
   name = StringField( label='Ingredient Name', validators=[DataRequired(), Length(min=1, max=100) ] )
   
   submit = SubmitField('Add Ingredient')
 
 # Routes ----------------------------------------------------------------------
+
+def add_ingredient(name:str):
+    new_ingredient = Ingredient(name=name)
+    db.session.add(new_ingredient)
+    db.session.commit()
+
+def add_recipe(name:str):
+    new_recipe = Recipe(name=name)
+    db.session.add(new_recipe)
+    db.session.commit()
+
+def link_ingredient_to_recipe(recipe_id:int, ingredient_id:int, amount:float, unit:str):
+    link = RecipeToIngredient(recipe_id=recipe_id, ingredient_id=ingredient_id, amount=amount, unit=unit)
+    db.session.add(link)
+    db.session.commit()
+
+def link_ingredient_to_recipe_by_names(recipe_name:str, ingredient_name:str, amount:float, unit:str):
+    recipe = Recipe.query.filter_by(name=recipe_name).first()
+    ingredient = Ingredient.query.filter_by(name=ingredient_name).first()
+    if recipe and ingredient:
+        link_ingredient_to_recipe(recipe.id, ingredient.id, amount, unit)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -78,13 +101,17 @@ def home():
     ingredientForm = IngredientForm(request.form)
     AddIngredientToRecipeForm = AddIngredientToRecipeForm(request.form)
     if request.method == 'POST' and recipeForm.validate() and ingredientForm.validate() and AddIngredientToRecipeForm.validate():
-        name = recipeForm.name.data
+        recipe_name = recipeForm.name.data
+        add_recipe(recipe_name)
+
+        ingredient_name = ingredientForm.name.data
+        add_ingredient(ingredient_name)
+
+
         amount = AddIngredientToRecipeForm.amount.data
         unit = AddIngredientToRecipeForm.unit.data
-        new_recipe = Recipe(name=name, )
-        new_ingredient = Ingredient(name=ingredientForm.name.data)
-        db.session.add(new_recipe)
-        db.session.commit()
+        
+
     recipes = Recipe.query.order_by(Recipe.id).all()
     return render_template('index.html', recipes=recipes, form=form)
 
