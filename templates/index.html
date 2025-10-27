@@ -9,17 +9,29 @@
 <body>
 
     <h1>Opskrifter</h1>
+  <form method="post">
+    <section id="modal_section">
+      <div id="addRecipeOverlay" class="overlay">
+          <button id="close_button">X</button>
+          <h2>Tilføj Ny Opskrift</h2>
+          {{ form.name.label }}
+          {{ form.name }}
+          <div id="temp-ingredients">
 
-    <form method="post">
-      {{ form.name.label }}
-      {{ form.name }}
-      {{ form.amount.label }}
-      {{ form.amount }}
-      {{ form.unit.label }}
-      {{ form.unit }}
-      {{ form.submit }}
-
-    </form>
+          </div>
+          <div>
+              <input type="text" id="ingredientInput" placeholder="Ingrediens" />
+              {{ form.amount.label }}
+              {{ form.amount }}
+              {{ form.unit.label }}
+              {{ form.unit }}
+              <button id="addIngredientBtn">Tilføj Ingrediens</button>
+          </div>
+          {{ form.submit }}
+      </div>
+  </section>
+</form>
+    
 
 </body>
 
