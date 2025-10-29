@@ -1,0 +1,19 @@
+@startuml myDiagram
+allowmixing
+
+database IngredientDB
+database RecipeDB
+database RecipeIngredientLinkDB
+
+class Ingredient {
+    - id
+    - name
+}
+
+class Recipe(Form) {
+    - id
+    - name
+}
+
+ 
+
