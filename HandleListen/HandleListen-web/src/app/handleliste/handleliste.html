@@ -1,0 +1,22 @@
+<h1>My Shopping List</h1>
+
+<div>
+    <input [(ngModel)]="newName" placeholder="Item name"/>
+    <input type="number" [(ngModel)]="newQuantity"/>
+    <button (click)="add()">Add Item</button>
+</div>
+
+@if (items().length === 0) {
+    <p>Shopping List is Empty</p>
+
+} @else {
+    <ul>
+        @for (item of items(); track item.id) {
+            <li>
+                <input type="checkbox" [checked]="item.isBought" (change)="toggle(item)"/>
+                <span>{{ item.name }} ({{ item.quantity }})</span>
+                <button (click)="remove(item.id)">Remove</button>
+            </li>
+        }
+    </ul>
+}
