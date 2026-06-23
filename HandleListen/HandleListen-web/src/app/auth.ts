@@ -17,17 +17,23 @@ export class AuthService {
     token = signal<string | null>(null);
     isLoggedIn = computed(() => this.token() !== null);
 
+    email = signal<string | null>(null);
+
     register(email: string, password: string): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/register`, { email, password });
     }
 
     login(email: string, password: string): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { email, password }).pipe(
-            tap(response => { this.token.set(response.accessToken); })
+            tap(response => { 
+                this.token.set(response.accessToken); 
+                this.email.set(email);
+            })
         );
     }
 
     logout() {
         this.token.set(null);
+        this.email.set(null);
     }
 }

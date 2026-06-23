@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HandleListen")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31d7384c95c5e1ff26a2303605b6b62b800f7f74")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+785eaefd99d2f2b68b446fd61c6f45fe146e31bf")]
 [assembly: System.Reflection.AssemblyProductAttribute("HandleListen")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HandleListen")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

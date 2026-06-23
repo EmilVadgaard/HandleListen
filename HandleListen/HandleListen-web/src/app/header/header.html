@@ -1,0 +1,12 @@
+<header>
+  <span>Min planlægger</span>
+  <nav>
+    @if (auth.isLoggedIn()) {
+      <a routerLink="/handleliste">Handleliste</a>
+      <span>{{ auth.email() }}</span>
+      <button mat-flat-button (click)="logout()">Log ud</button>
+    } @else {
+      <a routerLink="/login">Log ind</a>
+    }
+  </nav>
+</header>
