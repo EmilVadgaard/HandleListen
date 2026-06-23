@@ -12,8 +12,8 @@ export class ShoppingService {
         return this.http.get<ShoppingItem[]>(this.baseUrl);
     }
 
-    create(name: string, quantity: number): Observable<ShoppingItem> {
-        return this.http.post<ShoppingItem>(this.baseUrl, { name, quantity });
+    create(name: string, category: string, quantity: number): Observable<ShoppingItem> {
+        return this.http.post<ShoppingItem>(this.baseUrl, { name, category, quantity });
     }
 
     update(item: ShoppingItem): Observable<ShoppingItem> {

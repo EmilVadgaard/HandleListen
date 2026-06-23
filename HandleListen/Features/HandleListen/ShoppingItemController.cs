@@ -37,6 +37,7 @@ public class ShoppingItemController : ControllerBase
         if (item is null) return NotFound();
 
         item.Name = updatedItem.Name;
+        item.Category = updatedItem.Category;
         item.Quantity = updatedItem.Quantity;
 
         await _context.SaveChangesAsync();

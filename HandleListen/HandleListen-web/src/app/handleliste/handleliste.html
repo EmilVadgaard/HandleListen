@@ -2,6 +2,7 @@
 
 <div>
     <input [(ngModel)]="newName" placeholder="Item name"/>
+    <input [(ngModel)]="newCategory" placeholder="Category" />
     <input type="number" [(ngModel)]="newQuantity"/>
     <button (click)="add()">Add Item</button>
 </div>
@@ -10,13 +11,16 @@
     <p>Shopping List is Empty</p>
 
 } @else {
-    <ul>
-        @for (item of items(); track item.id) {
-            <li>
-                <input type="checkbox" [checked]="item.isBought" (change)="toggle(item)"/>
-                <span>{{ item.name }} ({{ item.quantity }})</span>
-                <button (click)="remove(item.id)">Remove</button>
-            </li>
-        }
-    </ul>
+    @for (group of groupedItems(); track group.category) {
+        <h2>{{ group.category }}</h2>
+        <ul>
+            @for (item of group.items; track item.id) {
+                <li>
+                    <span>{{ item.name }} ({{ item.quantity }})</span>
+                    <input type="number" [(ngModel)]=item.quantity (ngModelChange)="quantity(item, $event)" min="1" />
+                    <button (click)="remove(item.id)">Remove</button>
+                </li>
+            }
+        </ul>
+    }
 }

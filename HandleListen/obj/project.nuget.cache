@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "OnAntYQXm0I=",
+  "dgSpecHash": "u5SBD6wC8kY=",
   "success": true,
   "projectFilePath": "C:\\Users\\emil\\Github\\HandleListen\\HandleListen\\HandleListen.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\emil\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\emil\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\10.0.9\\microsoft.aspnetcore.identity.entityframeworkcore.10.0.9.nupkg.sha512",
     "C:\\Users\\emil\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.9\\microsoft.aspnetcore.openapi.10.0.9.nupkg.sha512",
     "C:\\Users\\emil\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
     "C:\\Users\\emil\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",

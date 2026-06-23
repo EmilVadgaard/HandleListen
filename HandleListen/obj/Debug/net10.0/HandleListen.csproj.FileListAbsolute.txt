@@ -154,3 +154,4 @@ C:\Users\emil\Github\HandleListen\HandleListen\bin\Debug\net10.0\HandleListen-we
 C:\Users\emil\Github\HandleListen\HandleListen\bin\Debug\net10.0\HandleListen-web\tsconfig.json
 C:\Users\emil\Github\HandleListen\HandleListen\bin\Debug\net10.0\HandleListen-web\tsconfig.spec.json
 C:\Users\emil\Github\HandleListen\HandleListen\bin\Debug\net10.0\Scalar.AspNetCore.dll
+C:\Users\emil\Github\HandleListen\HandleListen\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
