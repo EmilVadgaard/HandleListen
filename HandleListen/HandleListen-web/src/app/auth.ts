@@ -1,6 +1,7 @@
 import { Injectable,  inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Observable, tap, catchError, throwError } from 'rxjs';
 
 interface LoginResponse {
   tokenType: string;
@@ -12,15 +13,19 @@ interface LoginResponse {
 @Injectable({ providedIn: 'root'})
 export class AuthService {
     private http = inject(HttpClient);
-    private readonly baseUrl = 'http://localhost:5232/api/auth';
+    private readonly baseUrl = '/api/auth';
 
-    token = signal<string | null>(null);
+    token = signal<string | null>(localStorage.getItem('token'));
+    email = signal<string | null>(localStorage.getItem('email'));
+
     isLoggedIn = computed(() => this.token() !== null);
 
-    email = signal<string | null>(null);
-
     register(email: string, password: string): Observable<void> {
-        return this.http.post<void>(`${this.baseUrl}/register`, { email, password });
+        return this.http.post<void>(`${this.baseUrl}/register`, { email, password }).pipe(
+            catchError((err: HttpErrorResponse) => {
+            return throwError(() => new Error((Object.values(err.error.errors)[0] as string[])[0]));
+            })
+        );
     }
 
     login(email: string, password: string): Observable<LoginResponse> {
@@ -28,6 +33,8 @@ export class AuthService {
             tap(response => { 
                 this.token.set(response.accessToken); 
                 this.email.set(email);
+                localStorage.setItem('token', response.accessToken);
+                localStorage.setItem('email', email);
             })
         );
     }
@@ -35,5 +42,7 @@ export class AuthService {
     logout() {
         this.token.set(null);
         this.email.set(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('email');
     }
 }

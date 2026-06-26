@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/shopping-items")]
 public class ShoppingItemController : ControllerBase
 {
     private readonly AppDbContext _context;

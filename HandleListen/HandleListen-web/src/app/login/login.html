@@ -3,7 +3,8 @@
 <input [(ngModel)]="email" type="email" placeholder="Email" />
 <input [(ngModel)]="password" type="password" placeholder="Password" />
 <button (click)="login()">Login</button>
-<button (click)="register()">Register</button>
+<br/>
+<a href="/register">Don't have an account? Register here.</a>
 @if (errorMessage()) {
     <p>{{ errorMessage() }}</p>
 }

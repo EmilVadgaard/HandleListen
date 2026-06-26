@@ -26,14 +26,12 @@
               }
             ],
             "styles": ["src/material-theme.scss", "src/styles.css"],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
+            "outputMode": "static",
             "security": {
               "allowedHosts": []
             },
-            "ssr": {
-              "entry": "src/server.ts"
-            }
+            "ssr": false,
+            "prerender": false
           },
           "configurations": {
             "production": {
@@ -60,6 +58,9 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {

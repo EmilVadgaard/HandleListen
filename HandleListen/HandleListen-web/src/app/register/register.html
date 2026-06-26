@@ -1,0 +1,9 @@
+<h2>Register</h2>
+
+<input [(ngModel)]="email" type="email" placeholder="Email" />
+<input [(ngModel)]="password" type="password" placeholder="Password" />
+<input [(ngModel)]="confirmPassword" type="password" placeholder="Confirm Password" />
+<button (click)="register()">Register</button>
+@if (errorMessage()) {
+    <p>{{ errorMessage() }}</p>
+}
