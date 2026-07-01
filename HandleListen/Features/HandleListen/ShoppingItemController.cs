@@ -19,7 +19,6 @@ public class ShoppingItemController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ShoppingItem>> Create(ShoppingItem item)
     {
-        item.UserId = UserId;
         _context.ShoppingItems.Add(item);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
@@ -29,8 +28,16 @@ public class ShoppingItemController : ControllerBase
     public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetAll()
     {
         return await _context.ShoppingItems
-            .Where(x => x.UserId == UserId)
+            .Where(x => x.shoppingList.UserId == UserId && x.Id == x.ShoppingListId)
             .OrderBy(x => x.Name)
+            .ToListAsync();
+    }
+
+    [HttpGet("by-list/{shoppingListId}")]
+    public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetByList(int shoppingListId)
+    {
+        return await _context.ShoppingItems
+            .Where(x => x.shoppingList.UserId == UserId && x.ShoppingListId == shoppingListId)
             .ToListAsync();
     }
 
@@ -40,7 +47,7 @@ public class ShoppingItemController : ControllerBase
         if (id != updatedItem.Id) return BadRequest();
 
         var item = await _context.ShoppingItems
-            .Where(x => x.UserId == UserId)
+            .Where(x => x.shoppingList.UserId == UserId)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (item is null) return NotFound();
 
@@ -56,7 +63,6 @@ public class ShoppingItemController : ControllerBase
     public async Task<IActionResult> delete(int id)
     {
         var item = await _context.ShoppingItems
-            .Where(x => x.UserId == UserId)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (item is null) return NotFound();
 
@@ -69,7 +75,6 @@ public class ShoppingItemController : ControllerBase
     public async Task<ActionResult<ShoppingItem>> GetById(int id)
     {
         var item = await _context.ShoppingItems
-            .Where(x => x.UserId == UserId)
             .FirstOrDefaultAsync(x => x.Id == id);
         if (item == null) return NotFound();
         return item;

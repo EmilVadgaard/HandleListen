@@ -1,9 +1,21 @@
+<div style="margin-left: 2%;">
 <h2>Register</h2>
-
+<p>Password must contain following:</p>
+<ul>
+  <li>At least 6 characters</li>
+  <li>One uppercase letter</li>
+  <li>One lowercase letter</li>
+  <li>One number</li>
+</ul>
+<br/>
 <input [(ngModel)]="email" type="email" placeholder="Email" />
+<br/>
 <input [(ngModel)]="password" type="password" placeholder="Password" />
+<br/>
 <input [(ngModel)]="confirmPassword" type="password" placeholder="Confirm Password" />
+<br/>
 <button (click)="register()">Register</button>
 @if (errorMessage()) {
     <p>{{ errorMessage() }}</p>
 }
+</div>
