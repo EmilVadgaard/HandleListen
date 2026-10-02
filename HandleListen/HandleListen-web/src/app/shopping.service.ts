@@ -3,18 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ShoppingItem } from './shopping-item';
 
-// TODO: Jeg har lige ændret baseURL, byg på ny, og lig ind på siden.
 @Injectable({ providedIn: 'root' })
 export class ShoppingService {
     private http = inject(HttpClient);
     private readonly baseUrl = '/api/shopping-items';
 
-    getAll(): Observable<ShoppingItem[]> {
-        return this.http.get<ShoppingItem[]>(this.baseUrl);
+    getByList(shoppingListId: number): Observable<ShoppingItem[]> {
+        return this.http.get<ShoppingItem[]>(`${this.baseUrl}/by-list/${shoppingListId}`);
     }
 
-    create(name: string, category: string, quantity: number): Observable<ShoppingItem> {
-        return this.http.post<ShoppingItem>(this.baseUrl, { name, category, quantity });
+    create(name: string, category: string, quantity: number, shoppingListId: number): Observable<ShoppingItem> {
+        return this.http.post<ShoppingItem>(this.baseUrl, { name, category, quantity, shoppingListId });
     }
 
     update(item: ShoppingItem): Observable<ShoppingItem> {

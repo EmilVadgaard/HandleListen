@@ -1,0 +1,131 @@
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0 0 1rem;
+}
+
+.tab-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--mat-sys-outline-variant, #ddd);
+  margin-bottom: 1.5rem;
+}
+
+.tab-wrapper {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-wrapper.active {
+  border-bottom-color: var(--mat-sys-primary);
+}
+
+.tab {
+  padding: 0.6rem 0.25rem 0.6rem 1rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--mat-sys-on-surface);
+}
+
+.tab-wrapper.active .tab {
+  color: var(--mat-sys-primary);
+  font-weight: 600;
+}
+
+.tab-menu-toggle {
+  --mdc-icon-button-state-layer-size: 32px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin-right: 0.25rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+}
+
+.tab-add {
+  margin-bottom: 4px;
+}
+
+.add-list-form {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.add-list-input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--mat-sys-outline, #aaa);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.6;
+}
+
+.add-item-card {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+}
+
+.add-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.name-field {
+  flex: 2 1 10rem;
+}
+
+.category-field {
+  flex: 1 1 8rem;
+}
+
+.quantity-field {
+  flex: 0 1 6rem;
+}
+
+.add-item-button {
+  margin-top: 0.1rem;
+  white-space: nowrap;
+}
+
+.category-heading {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1.25rem 0 0.25rem;
+  color: var(--mat-sys-on-surface-variant, #555);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.quantity-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

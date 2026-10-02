@@ -50,14 +50,6 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-app.MapControllers();
-app.MapGroup("/api/auth").MapIdentityApi<IdentityUser>();
-
-app.UseCors(allowFrontend);
-
-app.UseAuthentication();
-app.UseAuthorization();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -66,6 +58,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(allowFrontend);
+
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
+app.MapGroup("/api/auth").MapIdentityApi<IdentityUser>();
 
 app.Run();

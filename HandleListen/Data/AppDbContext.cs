@@ -8,5 +8,20 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
 
     public DbSet<ShoppingItem> ShoppingItems => Set<ShoppingItem>();
     public DbSet<ShoppingList> ShoppingLists => Set<ShoppingList>();
-    // Senere: public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
+    public DbSet<ShoppingListGuest> ShoppingListGuests => Set<ShoppingListGuest>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<ShoppingListGuest>()
+            .HasOne<ShoppingList>()
+            .WithMany()
+            .HasForeignKey(g => g.ShoppingListId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ShoppingListGuest>()
+            .HasIndex(g => new { g.ShoppingListId, g.UserId })
+            .IsUnique();
+    }
 }

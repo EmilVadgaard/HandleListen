@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Liste-indstillinger</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Listenavn</mat-label>
+    <input matInput [(ngModel)]="renameValue" name="renameValue" (keyup.enter)="rename()" />
+  </mat-form-field>
+  <button
+    mat-stroked-button
+    class="full-width"
+    (click)="rename()"
+    [disabled]="!renameValue.trim() || renameValue.trim() === list.name">
+    Gem navn
+  </button>
+
+  @if (list.isOwner) {
+    <mat-divider class="section-divider"></mat-divider>
+    <h3 class="section-heading">Del liste</h3>
+
+    <div class="share-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput [(ngModel)]="shareEmail" name="shareEmail" placeholder="navn@eksempel.dk" (keyup.enter)="share()" />
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="share()" aria-label="Del liste" [disabled]="!shareEmail.trim()">
+        <mat-icon>person_add</mat-icon>
+      </button>
+    </div>
+
+    @if (shareError()) {
+      <p class="error-text">{{ shareError() }}</p>
+    }
+
+    @if (guests().length > 0) {
+      <mat-list>
+        @for (guest of guests(); track guest.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{ guest.email }}</span>
+            <button mat-icon-button matListItemMeta (click)="removeGuest(guest)" aria-label="Fjern adgang">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+
+    <mat-divider class="section-divider"></mat-divider>
+    <button mat-button color="warn" (click)="deleteList()">
+      <mat-icon>delete_outline</mat-icon>
+      Slet liste
+    </button>
+  } @else {
+    <mat-divider class="section-divider"></mat-divider>
+    <p class="hint-text">Delt af {{ list.ownerEmail }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Luk</button>
+</mat-dialog-actions>

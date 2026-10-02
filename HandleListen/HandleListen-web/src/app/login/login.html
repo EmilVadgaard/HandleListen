@@ -1,10 +1,29 @@
-<h2>Login</h2>
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Log ind</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="login()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" name="email" type="email" autocomplete="email" required />
+        </mat-form-field>
 
-<input [(ngModel)]="email" type="email" placeholder="Email" />
-<input [(ngModel)]="password" type="password" placeholder="Password" />
-<button (click)="login()">Login</button>
-<br/>
-<a href="/register">Don't have an account? Register here.</a>
-@if (errorMessage()) {
-    <p>{{ errorMessage() }}</p>
-}
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Adgangskode</mat-label>
+          <input matInput [(ngModel)]="password" name="password" type="password" autocomplete="current-password" required />
+        </mat-form-field>
+
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="submit" class="full-width">Log ind</button>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <a mat-button routerLink="/register">Opret konto</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

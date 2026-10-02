@@ -1,21 +1,35 @@
-<div style="margin-left: 2%;">
-<h2>Register</h2>
-<p>Password must contain following:</p>
-<ul>
-  <li>At least 6 characters</li>
-  <li>One uppercase letter</li>
-  <li>One lowercase letter</li>
-  <li>One number</li>
-</ul>
-<br/>
-<input [(ngModel)]="email" type="email" placeholder="Email" />
-<br/>
-<input [(ngModel)]="password" type="password" placeholder="Password" />
-<br/>
-<input [(ngModel)]="confirmPassword" type="password" placeholder="Confirm Password" />
-<br/>
-<button (click)="register()">Register</button>
-@if (errorMessage()) {
-    <p>{{ errorMessage() }}</p>
-}
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Opret konto</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="register()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" name="email" type="email" autocomplete="email" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Adgangskode</mat-label>
+          <input matInput [(ngModel)]="password" name="password" type="password" autocomplete="new-password" required />
+          <mat-hint>Mindst 6 tegn, med både store og små bogstaver og et tal.</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Bekræft adgangskode</mat-label>
+          <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required />
+        </mat-form-field>
+
+        @if (errorMessage()) {
+          <p class="error-text">{{ errorMessage() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="submit" class="full-width">Opret konto</button>
+      </form>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <a mat-button routerLink="/login">Log ind i stedet</a>
+    </mat-card-actions>
+  </mat-card>
 </div>

@@ -1,12 +1,12 @@
-<header>
-  <span>Min planlægger</span>
-  <nav>
-    @if (auth.isLoggedIn()) {
-      <a routerLink="/handleliste">Handleliste</a>
-      <span>{{ auth.email() }}</span>
-      <button mat-flat-button (click)="logout()">Log ud</button>
-    } @else {
-      <a routerLink="/login">Log ind</a>
-    }
-  </nav>
-</header>
+<mat-toolbar color="primary">
+  <mat-icon>shopping_cart</mat-icon>
+  <span class="app-title">Min planlægger</span>
+  <span class="spacer"></span>
+  @if (auth.isLoggedIn()) {
+    <a mat-button routerLink="/handleliste">Handleliste</a>
+    <span class="user-email">{{ auth.email() }}</span>
+    <button mat-stroked-button (click)="logout()">Log ud</button>
+  } @else {
+    <a mat-button routerLink="/login">Log ind</a>
+  }
+</mat-toolbar>

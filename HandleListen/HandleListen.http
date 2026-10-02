@@ -1,6 +1,6 @@
 @HandleListen_HostAddress = http://localhost:5232
 
-GET {{HandleListen_HostAddress}}/weatherforecast/
+GET {{HandleListen_HostAddress}}/api/shopping-lists/
 Accept: application/json
 
 ###

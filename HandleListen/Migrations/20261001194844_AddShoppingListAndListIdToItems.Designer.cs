@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HandleListen.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261001194844_AddShoppingListAndListIdToItems")]
+    partial class AddShoppingListAndListIdToItems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
@@ -241,6 +244,10 @@ namespace HandleListen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.PrimitiveCollection<string>("GuestIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -252,27 +259,6 @@ namespace HandleListen.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ShoppingLists");
-                });
-
-            modelBuilder.Entity("ShoppingListGuest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("ShoppingListId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ShoppingListId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("ShoppingListGuests");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -335,15 +321,6 @@ namespace HandleListen.Migrations
                         .IsRequired();
 
                     b.Navigation("shoppingList");
-                });
-
-            modelBuilder.Entity("ShoppingListGuest", b =>
-                {
-                    b.HasOne("ShoppingList", null)
-                        .WithMany()
-                        .HasForeignKey("ShoppingListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ShoppingList", b =>
