@@ -14,6 +14,7 @@ import { ShoppingItem } from '../shopping-item';
 import { ShoppingList } from '../shopping-list';
 import { ListSettingsDialog, ListSettingsResult } from '../list-settings-dialog/list-settings-dialog';
 import { ItemNameField } from '../item-name-field/item-name-field';
+import { MergeListsDialog } from '../merge-lists-dialog/merge-lists-dialog';
 
 @Component({
   selector: 'app-handleliste',
@@ -146,6 +147,22 @@ export class Handleliste implements OnInit {
     });
   }
 
+  openMergeDialog() {
+    const dialogRef = this.dialog.open(MergeListsDialog, {
+      data: { lists: this.lists() },
+      width: '420px',
+      maxWidth: '90vw',
+    });
+
+    dialogRef.afterClosed().subscribe((merged?: ShoppingList) => {
+      if (!merged) return;
+      this.shoppingListService.getAll().subscribe(lists => {
+        this.lists.set(lists);
+        this.selectList(merged.id);
+      });
+    });
+  }
+
   onCategorySuggested(category: string) {
     this.newCategory = category;
     this.cdr.markForCheck();
@@ -157,7 +174,11 @@ export class Handleliste implements OnInit {
     this.newCategory = this.newCategory.toLowerCase().trim() || 'Diverse';
     this.newCategory = this.newCategory.charAt(0).toUpperCase() + this.newCategory.slice(1);
     this.shoppingService.create(this.newName, this.newCategory, this.newQuantity, listId).subscribe(created => {
-      this.items.update(list => [...list, created]);
+      // The backend's realtime "ItemsChanged" broadcast also reaches this same client (it's
+      // sent to everyone in the list's group, including the creator) and may already have
+      // refreshed the list via onItemsChanged by the time this callback runs - guard against
+      // appending the same item twice.
+      this.items.update(list => list.some(i => i.id === created.id) ? list : [...list, created]);
       this.newName = '';
       this.newCategory = '';
       this.newQuantity = 1;

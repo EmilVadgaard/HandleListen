@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ShoppingService, CategorySuggestion } from '../shopping.service';
 import { AuthService } from '../auth';
 import { AddKnownItemDialog, AddKnownItemDialogData, AddKnownItemResult } from '../add-known-item-dialog/add-known-item-dialog';
+import { UnitOfMeasure } from '../unit-of-measure';
 
 @Component({
   selector: 'app-item-name-field',
@@ -25,6 +26,7 @@ export class ItemNameField {
   label = input('Vare');
 
   categorySuggested = output<string>();
+  unitSuggested = output<UnitOfMeasure | null>();
   enterPressed = output<void>();
 
   suggestion = signal<CategorySuggestion | null>(null);
@@ -47,6 +49,7 @@ export class ItemNameField {
         if (result.category) {
           this.categorySuggested.emit(result.category);
         }
+        this.unitSuggested.emit(result.defaultUnit);
       });
     }, ItemNameField.DEBOUNCE_MS);
   }
@@ -61,8 +64,9 @@ export class ItemNameField {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (!result) return;
-      this.suggestion.set({ category: result.category, source: 'Known' });
+      this.suggestion.set({ category: result.category, source: 'Known', defaultUnit: result.defaultUnit });
       this.categorySuggested.emit(result.category);
+      this.unitSuggested.emit(result.defaultUnit);
     });
   }
 

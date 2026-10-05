@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Generer handleliste</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Listenavn</mat-label>
+    <input matInput [(ngModel)]="listName" name="listName" />
+  </mat-form-field>
+
+  @if (loading()) {
+    <p class="hint-text">Henter ingredienser...</p>
+  } @else if (items().length === 0) {
+    <p class="hint-text">Opskrifterne i denne madplan har ingen ingredienser.</p>
+  } @else {
+    <p class="hint-text">Sammenlign "Antal" med den samlede mængde, og ret til eller fjern varer du allerede har.</p>
+    @for (group of groupedItems(); track group.category) {
+      <h3 class="category-heading">{{ group.category }}</h3>
+      <mat-list>
+        @for (item of group.items; track item.name) {
+          <mat-list-item class="item-row">
+            <span matListItemTitle>
+              {{ item.name }}
+              @if (item.amountSummary) {
+                <span class="amount-text">(i alt {{ item.amountSummary }})</span>
+              }
+            </span>
+            <div matListItemMeta class="item-actions">
+              <button mat-icon-button (click)="updateQuantity(item, item.quantity - 1)" [disabled]="item.quantity <= 1" aria-label="Færre">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="quantity-value">{{ item.quantity }}</span>
+              <button mat-icon-button (click)="updateQuantity(item, item.quantity + 1)" aria-label="Flere">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button mat-icon-button (click)="removeItem(item)" aria-label="Fjern vare">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  }
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuller</button>
+  <button mat-flat-button color="primary" [disabled]="!listName.trim() || items().length === 0 || saving()" (click)="confirm()">
+    Opret liste
+  </button>
+</mat-dialog-actions>

@@ -15,23 +15,40 @@
     </button>
 </div>
 
-<div class="recipe-grid">
-    <mat-card class="recipe-card add-card" (click)="openAddRecipe()">
-        <mat-icon class="add-icon">add</mat-icon>
-    </mat-card>
-
-    @for (recipe of filteredRecipes(); track recipe.id) {
-        <mat-card class="recipe-card" (click)="openRecipe(recipe)">
-            <mat-card-content>
-                <h3 class="recipe-title">{{ recipe.title }}</h3>
-                @if (recipe.tags.length > 0) {
-                    <mat-chip-set class="recipe-tags">
-                        @for (tag of recipe.tags; track tag.id) {
-                            <mat-chip disabled>{{ tag.tag }}</mat-chip>
-                        }
-                    </mat-chip-set>
-                }
-            </mat-card-content>
-        </mat-card>
+<div class="page-layout">
+    @if (allTags().length > 0) {
+        <aside class="tag-sidebar">
+            <h3 class="sidebar-heading">Tags</h3>
+            @for (tag of allTags(); track tag) {
+                <button
+                    type="button"
+                    class="tag-filter-button"
+                    [class.active]="isTagSelected(tag)"
+                    (click)="toggleTagFilter(tag)">
+                    {{ tag }}
+                </button>
+            }
+        </aside>
     }
+
+    <div class="recipe-grid">
+        <mat-card class="recipe-card add-card" (click)="openAddRecipe()">
+            <mat-icon class="add-icon">add</mat-icon>
+        </mat-card>
+
+        @for (recipe of filteredRecipes(); track recipe.id) {
+            <mat-card class="recipe-card" (click)="openRecipe(recipe)">
+                <mat-card-content>
+                    <h3 class="recipe-title">{{ recipe.title }}</h3>
+                    @if (recipe.tags.length > 0) {
+                        <mat-chip-set class="recipe-tags">
+                            @for (tag of recipe.tags; track tag.id) {
+                                <mat-chip disabled>{{ tag.tag }}</mat-chip>
+                            }
+                        </mat-chip-set>
+                    }
+                </mat-card-content>
+            </mat-card>
+        }
+    </div>
 </div>

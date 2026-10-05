@@ -1,0 +1,37 @@
+<h2 mat-dialog-title>Ny madplan</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Navn</mat-label>
+    <input matInput [(ngModel)]="name" name="name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+    <mat-label>Søg opskrifter eller tags</mat-label>
+    <input matInput [(ngModel)]="searchQuery" placeholder="f.eks. vegetar" />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  @if (filteredRecipes().length === 0) {
+    <p class="hint-text">Ingen opskrifter matcher.</p>
+  } @else {
+    <mat-list class="recipe-pick-list">
+      @for (recipe of filteredRecipes(); track recipe.id) {
+        <mat-list-item (click)="toggleRecipe(recipe.id)" class="pick-item">
+          <mat-checkbox [checked]="isSelected(recipe.id)" (click)="$event.stopPropagation(); toggleRecipe(recipe.id)">
+            {{ recipe.title }}
+          </mat-checkbox>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuller</button>
+  <button mat-flat-button color="primary" [disabled]="!name.trim() || saving()" (click)="save()">Gem</button>
+</mat-dialog-actions>

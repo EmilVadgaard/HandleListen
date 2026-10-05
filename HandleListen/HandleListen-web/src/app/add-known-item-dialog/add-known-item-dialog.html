@@ -15,6 +15,15 @@
         }
       </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Standard-enhed (valgfrit, bruges kun i opskrifter)</mat-label>
+      <mat-select [(ngModel)]="defaultUnit">
+        <mat-option [value]="null">Ingen</mat-option>
+        @for (u of units; track u) {
+          <mat-option [value]="u">{{ unitLabels[u] }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   } @else {
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Eksisterende item</mat-label>

@@ -86,4 +86,8 @@ export class RealtimeService {
     onRecipesChanged(callback: () => void) {
         this.connect().then(() => this.connection?.on('RecipesChanged', callback));
     }
+
+    onMealPlansChanged(callback: () => void) {
+        this.connect().then(() => this.connection?.on('MealPlansChanged', callback));
+    }
 }

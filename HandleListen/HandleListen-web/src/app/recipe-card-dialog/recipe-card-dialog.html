@@ -24,7 +24,12 @@
       <mat-list>
         @for (ingredient of ingredients(); track ingredient.id) {
           <mat-list-item>
-            <span matListItemTitle>{{ ingredient.quantity }}x {{ ingredient.name }}</span>
+            <span matListItemTitle>
+              {{ ingredient.quantity }}x {{ ingredient.name }}
+              @if (ingredient.amount) {
+                <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
+              }
+            </span>
           </mat-list-item>
         }
       </mat-list>
@@ -93,21 +98,50 @@
         class="name-field"
         label="Ingrediens"
         [(name)]="newIngredientName"
-        (enterPressed)="addIngredient()" />
+        (enterPressed)="addIngredient()"
+        (categorySuggested)="onCategorySuggested($event)"
+        (unitSuggested)="onUnitSuggested($event)" />
+      <mat-form-field appearance="outline" class="category-field" subscriptSizing="dynamic">
+        <mat-label>Kategori</mat-label>
+        <mat-select [(ngModel)]="newIngredientCategory">
+          @for (c of categories; track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
       <mat-form-field appearance="outline" class="quantity-field" subscriptSizing="dynamic">
         <mat-label>Antal</mat-label>
         <input matInput type="number" min="1" [(ngModel)]="newIngredientQuantity" (keyup.enter)="addIngredient()" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="amount-field" subscriptSizing="dynamic">
+        <mat-label>Mængde</mat-label>
+        <input matInput type="number" min="0" step="0.1" [(ngModel)]="newIngredientAmount" (keyup.enter)="addIngredient()" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="unit-field" subscriptSizing="dynamic">
+        <mat-label>Enhed</mat-label>
+        <mat-select [(ngModel)]="newIngredientUnit">
+          <mat-option [value]="null">–</mat-option>
+          @for (u of units; track u) {
+            <mat-option [value]="u">{{ unitLabels[u] }}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
       <button mat-icon-button color="primary" (click)="addIngredient()" aria-label="Tilføj ingrediens">
         <mat-icon>add</mat-icon>
       </button>
     </div>
+    <p class="hint-text amount-hint">Mængde er valgfri og bruges kun til senere at lægge ingredienser sammen på tværs af opskrifter i en madplan.</p>
 
     @if (ingredients().length > 0) {
       <mat-list>
         @for (ingredient of ingredients(); track ingredient.id) {
           <mat-list-item class="item-row">
-            <span matListItemTitle>{{ ingredient.name }}</span>
+            <span matListItemTitle>
+              {{ ingredient.name }}
+              @if (ingredient.amount) {
+                <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
+              }
+            </span>
             <div matListItemMeta class="item-actions">
               <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity - 1)" [disabled]="ingredient.quantity <= 1" aria-label="Færre">
                 <mat-icon>remove</mat-icon>

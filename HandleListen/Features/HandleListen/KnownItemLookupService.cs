@@ -22,7 +22,7 @@ public class KnownItemLookupService
             .Where(a => a.Alias == normalized)
             .Join(_context.KnownItems, a => a.KnownItemId, k => k.Id, (a, k) => k)
             .FirstOrDefaultAsync();
-        if (known is not null) return new CategorySuggestion(known.Category, "Known");
+        if (known is not null) return new CategorySuggestion(known.Category, "Known", known.DefaultUnit);
 
         // Names keep their original casing (they're shown to the user as typed), so this
         // comparison is done in memory with a culture-correct, case-insensitive check rather
@@ -46,5 +46,19 @@ public class KnownItemLookupService
         if (ingredientUsedBefore) return new CategorySuggestion(null, "History");
 
         return new CategorySuggestion(null, null);
+    }
+
+    // Used when stacking ingredients across recipes (meal-plan list generation): resolves a
+    // typed name to the catalog's canonical spelling + category when it matches a known alias,
+    // so "tomat" and "Tomat" (or any registered alias) group together under one line.
+    public async Task<(string CanonicalName, string? Category)> ResolveCanonical(string name)
+    {
+        var trimmed = name.Trim();
+        var normalized = trimmed.ToLowerInvariant();
+        var known = await _context.KnownItemAliases
+            .Where(a => a.Alias == normalized)
+            .Join(_context.KnownItems, a => a.KnownItemId, k => k.Id, (a, k) => k)
+            .FirstOrDefaultAsync();
+        return known is not null ? (known.CanonicalName, known.Category) : (trimmed, null);
     }
 }

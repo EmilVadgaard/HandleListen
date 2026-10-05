@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { KnownItemService, KnownItem } from '../known-item.service';
+import { UnitOfMeasure, ALL_UNITS, UNIT_LABELS } from '../unit-of-measure';
+import { CATEGORIES } from '../category';
 
 export interface AddKnownItemDialogData {
   name: string;
@@ -15,9 +17,8 @@ export interface AddKnownItemDialogData {
 
 export interface AddKnownItemResult {
   category: string;
+  defaultUnit: UnitOfMeasure | null;
 }
-
-const CATEGORIES = ['Grønt', 'Køl', 'Mejeri', 'Konserve', 'Brød', 'Tørvarer', 'Drikkevarer', 'Slik', 'Frost', 'Rengøring'];
 
 @Component({
   selector: 'app-add-known-item-dialog',
@@ -31,8 +32,11 @@ export class AddKnownItemDialog {
   data = inject<AddKnownItemDialogData>(MAT_DIALOG_DATA);
 
   categories = CATEGORIES;
+  units = ALL_UNITS;
+  unitLabels = UNIT_LABELS;
   mode = signal<'new' | 'alias'>('new');
   category = '';
+  defaultUnit: UnitOfMeasure | null = null;
   error = signal<string | null>(null);
   saving = signal(false);
 
@@ -70,10 +74,10 @@ export class AddKnownItemDialog {
         return;
       }
       this.saving.set(true);
-      this.knownItemService.create(this.data.name, this.category).subscribe({
+      this.knownItemService.create(this.data.name, this.category, this.defaultUnit).subscribe({
         next: item => {
           this.saving.set(false);
-          this.dialogRef.close({ category: item.category });
+          this.dialogRef.close({ category: item.category, defaultUnit: item.defaultUnit });
         },
         error: () => {
           this.saving.set(false);
@@ -90,7 +94,7 @@ export class AddKnownItemDialog {
       this.knownItemService.addAlias(target.id, this.data.name).subscribe({
         next: () => {
           this.saving.set(false);
-          this.dialogRef.close({ category: target.category });
+          this.dialogRef.close({ category: target.category, defaultUnit: target.defaultUnit });
         },
         error: () => {
           this.saving.set(false);

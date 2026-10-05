@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { UnitOfMeasure } from './unit-of-measure';
 
 export interface KnownItem {
     id: number;
     canonicalName: string;
     category: string;
+    defaultUnit: UnitOfMeasure | null;
     aliases: string[];
 }
 
@@ -19,8 +21,8 @@ export class KnownItemService {
         return this.http.get<KnownItem[]>(this.baseUrl, { params });
     }
 
-    create(name: string, category: string): Observable<KnownItem> {
-        return this.http.post<KnownItem>(this.baseUrl, { name, category });
+    create(name: string, category: string, defaultUnit: UnitOfMeasure | null = null): Observable<KnownItem> {
+        return this.http.post<KnownItem>(this.baseUrl, { name, category, defaultUnit });
     }
 
     addAlias(knownItemId: number, alias: string): Observable<void> {

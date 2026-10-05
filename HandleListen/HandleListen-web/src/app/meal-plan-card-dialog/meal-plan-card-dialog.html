@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>{{ plan.name }}</h2>
+
+<mat-dialog-content>
+  <h3 class="section-heading">Opskrifter</h3>
+  @if (plan.recipes.length === 0) {
+    <p class="hint-text">Ingen opskrifter i denne madplan.</p>
+  } @else {
+    <mat-list>
+      @for (recipe of plan.recipes; track recipe.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ recipe.title }}</span>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+
+  <mat-divider class="section-divider"></mat-divider>
+  <button mat-button color="warn" (click)="deletePlan()">
+    <mat-icon>delete_outline</mat-icon>
+    Slet madplan
+  </button>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Luk</button>
+  <button mat-flat-button color="primary" (click)="openGenerateDialog()">
+    <mat-icon>shopping_cart</mat-icon>
+    Generer liste
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,13 @@
+<div class="plan-rows">
+    <mat-card class="plan-row add-row" (click)="openAddPlan()">
+        <mat-icon class="add-icon">add</mat-icon>
+        <span>Ny madplan</span>
+    </mat-card>
+
+    @for (plan of plans(); track plan.id) {
+        <mat-card class="plan-row" (click)="openPlan(plan)">
+            <span class="plan-name">{{ plan.name }}</span>
+            <span class="plan-recipe-count">{{ plan.recipes.length }} opskrift(er)</span>
+        </mat-card>
+    }
+</div>

@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Sammenlæg lister</h2>
+
+<mat-dialog-content>
+  <p class="hint-text">Vælg mindst to lister. De oprindelige lister bliver slettet, og en ny, sammenlagt liste oprettes i stedet.</p>
+
+  <mat-list class="list-pick-list">
+    @for (list of data.lists; track list.id) {
+      <mat-list-item (click)="toggleList(list.id)" class="pick-item">
+        <mat-checkbox [checked]="isSelected(list.id)" (click)="$event.stopPropagation(); toggleList(list.id)">
+          {{ list.name }}
+        </mat-checkbox>
+      </mat-list-item>
+    }
+  </mat-list>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Navn på den nye liste (valgfrit)</mat-label>
+    <input matInput [(ngModel)]="name" name="name" placeholder="Standard: listernes navne" />
+  </mat-form-field>
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuller</button>
+  <button mat-flat-button color="primary" [disabled]="saving()" (click)="save()">Sammenlæg</button>
+</mat-dialog-actions>

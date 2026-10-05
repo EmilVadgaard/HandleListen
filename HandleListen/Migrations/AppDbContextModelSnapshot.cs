@@ -120,6 +120,9 @@ namespace HandleListen.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("DefaultUnit")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.ToTable("KnownItems");
@@ -146,6 +149,45 @@ namespace HandleListen.Migrations
                     b.HasIndex("KnownItemId");
 
                     b.ToTable("KnownItemAliases");
+                });
+
+            modelBuilder.Entity("MealPlan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RecipeBookId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MealPlans");
+                });
+
+            modelBuilder.Entity("MealPlanRecipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MealPlanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MealPlanId");
+
+                    b.HasIndex("RecipeId");
+
+                    b.ToTable("MealPlanRecipes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -422,6 +464,13 @@ namespace HandleListen.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CreatedByUserId")
                         .HasColumnType("TEXT");
 
@@ -433,6 +482,9 @@ namespace HandleListen.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("RecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Unit")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -555,6 +607,21 @@ namespace HandleListen.Migrations
                     b.HasOne("KnownItem", null)
                         .WithMany()
                         .HasForeignKey("KnownItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MealPlanRecipe", b =>
+                {
+                    b.HasOne("MealPlan", null)
+                        .WithMany()
+                        .HasForeignKey("MealPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

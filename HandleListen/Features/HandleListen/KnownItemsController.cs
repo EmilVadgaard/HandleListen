@@ -51,6 +51,7 @@ public class KnownItemsController : ControllerBase
                 k.Id,
                 k.CanonicalName,
                 k.Category,
+                k.DefaultUnit,
                 aliases.Where(a => a.KnownItemId == k.Id).Select(a => a.Alias).ToList()))
             .ToList();
     }
@@ -67,14 +68,14 @@ public class KnownItemsController : ControllerBase
         var exists = await _context.KnownItemAliases.AnyAsync(a => a.Alias == normalized);
         if (exists) return Conflict("Et kendt item med dette navn findes allerede.");
 
-        var item = new KnownItem { CanonicalName = name, Category = category };
+        var item = new KnownItem { CanonicalName = name, Category = category, DefaultUnit = request.DefaultUnit };
         _context.KnownItems.Add(item);
         await _context.SaveChangesAsync();
 
         _context.KnownItemAliases.Add(new KnownItemAlias { KnownItemId = item.Id, Alias = normalized });
         await _context.SaveChangesAsync();
 
-        return new KnownItemDto(item.Id, item.CanonicalName, item.Category, new List<string> { normalized });
+        return new KnownItemDto(item.Id, item.CanonicalName, item.Category, item.DefaultUnit, new List<string> { normalized });
     }
 
     [Authorize(Roles = "Owner,Moderator")]

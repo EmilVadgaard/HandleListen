@@ -1,0 +1,14 @@
+.section-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.section-divider {
+  margin: 1rem 0;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.875rem;
+}

@@ -40,4 +40,8 @@ export class ShoppingListService {
     removeGuest(id: number, guestId: string): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${id}/guests/${guestId}`);
     }
+
+    merge(listIds: number[], name: string | null = null): Observable<ShoppingList> {
+        return this.http.post<ShoppingList>(`${this.baseUrl}/merge`, { name, listIds });
+    }
 }

@@ -15,6 +15,9 @@ import { RealtimeService } from '../realtime.service';
 import { Recipe } from '../recipe';
 import { RecipeIngredient } from '../recipe-ingredient';
 import { ItemNameField } from '../item-name-field/item-name-field';
+import { MatSelectModule } from '@angular/material/select';
+import { UnitOfMeasure, ALL_UNITS, UNIT_LABELS } from '../unit-of-measure';
+import { CATEGORIES } from '../category';
 
 export interface RecipeCardDialogResult {
   deleted?: boolean;
@@ -23,7 +26,7 @@ export interface RecipeCardDialogResult {
 
 @Component({
   selector: 'app-recipe-card-dialog',
-  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatListModule, MatDividerModule, MatChipsModule, MatAutocompleteModule, ItemNameField],
+  imports: [FormsModule, MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatListModule, MatDividerModule, MatChipsModule, MatAutocompleteModule, MatSelectModule, ItemNameField],
   templateUrl: './recipe-card-dialog.html',
   styleUrl: './recipe-card-dialog.css',
 })
@@ -42,6 +45,12 @@ export class RecipeCardDialog implements OnDestroy {
   ingredients = signal<RecipeIngredient[]>([]);
   newIngredientName = '';
   newIngredientQuantity = 1;
+  newIngredientAmount: number | null = null;
+  newIngredientUnit: UnitOfMeasure | null = null;
+  newIngredientCategory = '';
+  units = ALL_UNITS;
+  unitLabels = UNIT_LABELS;
+  categories = CATEGORIES;
 
   tagInput = '';
   tagSuggestions = signal<string[]>([]);
@@ -61,12 +70,11 @@ export class RecipeCardDialog implements OnDestroy {
     this.recipeService.getTagSuggestions().subscribe(tags => this.tagSuggestions.set(tags));
     this.realtime.joinRecipe(recipe.id);
     this.realtime.onRecipeIngredientsChanged(recipeId => {
+      // Ingredient-only event: title/description/tags are already kept in sync by their own
+      // optimistic updates (saveDetails/addTag/removeTag), so there's no need to also refetch
+      // the whole recipe here - that was a redundant extra round trip on every ingredient edit.
       if (recipeId === this.recipe().id) {
         this.ingredientService.getByRecipe(recipeId).subscribe(ingredients => this.ingredients.set(ingredients));
-        this.recipeService.getById(recipeId).subscribe(updated => {
-          this.recipe.set(updated);
-          this.changed = true;
-        });
       }
     });
   }
@@ -98,13 +106,27 @@ export class RecipeCardDialog implements OnDestroy {
     });
   }
 
+  onUnitSuggested(unit: UnitOfMeasure | null) {
+    this.newIngredientUnit = unit;
+  }
+
+  onCategorySuggested(category: string) {
+    this.newIngredientCategory = category;
+  }
+
   addIngredient() {
     const recipeId = this.recipe().id;
     if (!this.newIngredientName.trim()) return;
-    this.ingredientService.create(this.newIngredientName, this.newIngredientQuantity, recipeId).subscribe(created => {
-      this.ingredients.update(list => [...list, created]);
+    this.ingredientService.create(this.newIngredientName, this.newIngredientQuantity, recipeId, this.newIngredientAmount, this.newIngredientUnit, this.newIngredientCategory).subscribe(created => {
+      // The backend's realtime "RecipeIngredientsChanged" broadcast also reaches this same
+      // client and may already have refreshed the list by the time this callback runs - guard
+      // against appending the same ingredient twice.
+      this.ingredients.update(list => list.some(i => i.id === created.id) ? list : [...list, created]);
       this.newIngredientName = '';
       this.newIngredientQuantity = 1;
+      this.newIngredientAmount = null;
+      this.newIngredientUnit = null;
+      this.newIngredientCategory = '';
       this.nameField()?.reset();
     });
   }
@@ -112,6 +134,13 @@ export class RecipeCardDialog implements OnDestroy {
   ingredientQuantity(ingredient: RecipeIngredient, updatedQuantity: number) {
     if (updatedQuantity < 1) return;
     const updated = { ...ingredient, quantity: updatedQuantity };
+    this.ingredientService.update(updated).subscribe(() => {
+      this.ingredients.update(list => list.map(i => i.id === ingredient.id ? updated : i));
+    });
+  }
+
+  updateIngredientAmount(ingredient: RecipeIngredient, amount: number | null, unit: UnitOfMeasure | null) {
+    const updated = { ...ingredient, amount, unit };
     this.ingredientService.update(updated).subscribe(() => {
       this.ingredients.update(list => list.map(i => i.id === ingredient.id ? updated : i));
     });

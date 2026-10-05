@@ -58,6 +58,9 @@ public class RecipeIngredientController : ControllerBase
 
         ingredient.Name = updated.Name;
         ingredient.Quantity = updated.Quantity;
+        ingredient.Category = updated.Category;
+        ingredient.Amount = updated.Amount;
+        ingredient.Unit = updated.Unit;
 
         await _context.SaveChangesAsync();
         await _notifier.NotifyRecipeIngredientsChanged(ingredient.RecipeId);

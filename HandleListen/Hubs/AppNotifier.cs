@@ -29,4 +29,8 @@ public class AppNotifier
     public Task NotifyRecipesChanged(IEnumerable<string> userIds) =>
         Task.WhenAll(userIds.Distinct().Select(userId =>
             _hub.Clients.Group(GroupNames.ForUser(userId)).SendAsync("RecipesChanged")));
+
+    public Task NotifyMealPlansChanged(IEnumerable<string> userIds) =>
+        Task.WhenAll(userIds.Distinct().Select(userId =>
+            _hub.Clients.Group(GroupNames.ForUser(userId)).SendAsync("MealPlansChanged")));
 }

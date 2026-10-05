@@ -1,0 +1,39 @@
+.full-width {
+  width: 100%;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.875rem;
+}
+
+.category-heading {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 1rem 0 0.25rem;
+  color: var(--mat-sys-on-surface-variant, #555);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.quantity-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.amount-text {
+  margin-left: 0.5rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.875rem;
+}
+
+.error-text {
+  color: #b3261e;
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0;
+}

@@ -30,14 +30,30 @@ export class Opskrifter implements OnInit {
 
   recipes = signal<Recipe[]>([]);
   searchQuery = '';
+  selectedTags = signal<Set<string>>(new Set());
   pendingInviteCount = signal(0);
+
+  allTags = computed(() => {
+    const tags = new Set<string>();
+    for (const recipe of this.recipes()) {
+      for (const tag of recipe.tags) tags.add(tag.tag);
+    }
+    return Array.from(tags).sort((a, b) => a.localeCompare(b, 'da'));
+  });
 
   filteredRecipes = computed(() => {
     const query = this.searchQuery.trim().toLowerCase();
-    if (!query) return this.recipes();
-    return this.recipes().filter(r =>
-      r.title.toLowerCase().includes(query) ||
-      r.tags.some(t => t.tag.toLowerCase().includes(query)));
+    const required = this.selectedTags();
+    return this.recipes().filter(r => {
+      const matchesQuery = !query ||
+        r.title.toLowerCase().includes(query) ||
+        r.tags.some(t => t.tag.toLowerCase().includes(query));
+      if (!matchesQuery) return false;
+
+      if (required.size === 0) return true;
+      const recipeTags = new Set(r.tags.map(t => t.tag.toLowerCase()));
+      return Array.from(required).every(t => recipeTags.has(t.toLowerCase()));
+    });
   });
 
   ngOnInit() {
@@ -59,6 +75,18 @@ export class Opskrifter implements OnInit {
     });
   }
 
+  toggleTagFilter(tag: string) {
+    this.selectedTags.update(tags => {
+      const next = new Set(tags);
+      if (next.has(tag)) next.delete(tag); else next.add(tag);
+      return next;
+    });
+  }
+
+  isTagSelected(tag: string): boolean {
+    return this.selectedTags().has(tag);
+  }
+
   openAddRecipe() {
     const dialogRef = this.dialog.open(AddRecipeDialog, {
       width: '480px',
@@ -67,7 +95,10 @@ export class Opskrifter implements OnInit {
 
     dialogRef.afterClosed().subscribe((created?: Recipe) => {
       if (created) {
-        this.recipes.update(recipes => [...recipes, created]);
+        // The backend's realtime "RecipesChanged" broadcast also reaches this same client
+        // and may already have refreshed the grid via refreshRecipes() by the time this
+        // callback runs - guard against appending the same recipe twice.
+        this.recipes.update(recipes => recipes.some(r => r.id === created.id) ? recipes : [...recipes, created]);
       }
     });
   }

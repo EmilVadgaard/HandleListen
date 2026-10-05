@@ -38,6 +38,11 @@
         <button mat-icon-button class="tab-add" (click)="startAddList()" aria-label="Opret ny liste">
             <mat-icon>add</mat-icon>
         </button>
+        @if (lists().length >= 2) {
+            <button mat-icon-button class="tab-add" (click)="openMergeDialog()" aria-label="Sammenlæg lister">
+                <mat-icon>call_merge</mat-icon>
+            </button>
+        }
     }
 </div>
 

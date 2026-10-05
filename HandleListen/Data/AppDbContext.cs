@@ -21,6 +21,8 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<RecipeBook> RecipeBooks => Set<RecipeBook>();
     public DbSet<RecipeBookMember> RecipeBookMembers => Set<RecipeBookMember>();
     public DbSet<RecipeBookInvite> RecipeBookInvites => Set<RecipeBookInvite>();
+    public DbSet<MealPlan> MealPlans => Set<MealPlan>();
+    public DbSet<MealPlanRecipe> MealPlanRecipes => Set<MealPlanRecipe>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -83,5 +85,17 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         builder.Entity<RecipeBookMember>()
             .HasIndex(m => new { m.RecipeBookId, m.UserId })
             .IsUnique();
+
+        builder.Entity<MealPlanRecipe>()
+            .HasOne<MealPlan>()
+            .WithMany()
+            .HasForeignKey(mpr => mpr.MealPlanId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<MealPlanRecipe>()
+            .HasOne<Recipe>()
+            .WithMany()
+            .HasForeignKey(mpr => mpr.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
