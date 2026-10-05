@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Authorization;
 public class ShoppingItemController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly AppNotifier _notifier;
     private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    public ShoppingItemController(AppDbContext context)
+    public ShoppingItemController(AppDbContext context, AppNotifier notifier)
     {
         _context = context;
+        _notifier = notifier;
     }
 
     [HttpPost]
@@ -31,8 +33,10 @@ public class ShoppingItemController : ControllerBase
             if (!listAccessible) return NotFound();
         }
 
+        item.CreatedByUserId = UserId;
         _context.ShoppingItems.Add(item);
         await _context.SaveChangesAsync();
+        await _notifier.NotifyItemsChanged(item.ShoppingListId);
         return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
     }
 
@@ -83,6 +87,7 @@ public class ShoppingItemController : ControllerBase
         item.Quantity = updatedItem.Quantity;
 
         await _context.SaveChangesAsync();
+        await _notifier.NotifyItemsChanged(item.ShoppingListId);
         return NoContent();
     }
 
@@ -94,8 +99,10 @@ public class ShoppingItemController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
         if (item is null) return NotFound();
 
+        var listId = item.ShoppingListId;
         _context.ShoppingItems.Remove(item);
         await _context.SaveChangesAsync();
+        await _notifier.NotifyItemsChanged(listId);
         return NoContent();
     }
 

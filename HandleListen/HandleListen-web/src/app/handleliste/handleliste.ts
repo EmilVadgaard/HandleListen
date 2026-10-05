@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, ChangeDetectorRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,20 +9,25 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { ShoppingService } from '../shopping.service';
 import { ShoppingListService } from '../shopping-list.service';
+import { RealtimeService } from '../realtime.service';
 import { ShoppingItem } from '../shopping-item';
 import { ShoppingList } from '../shopping-list';
 import { ListSettingsDialog, ListSettingsResult } from '../list-settings-dialog/list-settings-dialog';
+import { ItemNameField } from '../item-name-field/item-name-field';
 
 @Component({
   selector: 'app-handleliste',
-  imports: [FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule],
+  imports: [FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule, ItemNameField],
   templateUrl: './handleliste.html',
   styleUrl: './handleliste.css',
 })
 export class Handleliste implements OnInit {
   private shoppingService = inject(ShoppingService);
   private shoppingListService = inject(ShoppingListService);
+  private realtime = inject(RealtimeService);
   private dialog = inject(MatDialog);
+  private cdr = inject(ChangeDetectorRef);
+  nameField = viewChild(ItemNameField);
 
   lists = signal<ShoppingList[]>([]);
   selectedListId = signal<number | null>(null);
@@ -47,16 +52,45 @@ export class Handleliste implements OnInit {
   newQuantity = 1;
 
   ngOnInit() {
+    this.refreshLists();
+
+    this.realtime.onItemsChanged(listId => {
+      if (listId === this.selectedListId()) {
+        this.shoppingService.getByList(listId).subscribe(items => this.items.set(items));
+      }
+    });
+
+    this.realtime.onListsChanged(() => this.refreshLists());
+
+    this.realtime.onReconnected(() => {
+      const id = this.selectedListId();
+      if (id !== null) this.realtime.joinList(id);
+    });
+  }
+
+  private refreshLists() {
     this.shoppingListService.getAll().subscribe(lists => {
       this.lists.set(lists);
-      if (lists.length > 0) {
-        this.selectList(lists[0].id);
+      const currentId = this.selectedListId();
+      const stillExists = currentId !== null && lists.some(l => l.id === currentId);
+      if (!stillExists) {
+        if (lists.length > 0) {
+          this.selectList(lists[0].id);
+        } else {
+          this.selectedListId.set(null);
+          this.items.set([]);
+        }
       }
     });
   }
 
   selectList(id: number) {
+    const previousId = this.selectedListId();
+    if (previousId !== null && previousId !== id) {
+      this.realtime.leaveList(previousId);
+    }
     this.selectedListId.set(id);
+    this.realtime.joinList(id);
     this.shoppingService.getByList(id).subscribe(items => {
       this.items.set(items);
     });
@@ -74,11 +108,14 @@ export class Handleliste implements OnInit {
   confirmAddList() {
     const name = this.newListName.trim();
     if (!name) return;
-    this.shoppingListService.create(name).subscribe(created => {
-      this.lists.update(lists => [...lists, created]);
-      this.newListName = '';
-      this.isAddingList.set(false);
-      this.selectList(created.id);
+    this.shoppingListService.create(name).subscribe({
+      next: created => {
+        this.lists.update(lists => [...lists, created]);
+        this.newListName = '';
+        this.isAddingList.set(false);
+        this.selectList(created.id);
+      },
+      error: err => console.error('Failed to create list', err)
     });
   }
 
@@ -109,6 +146,11 @@ export class Handleliste implements OnInit {
     });
   }
 
+  onCategorySuggested(category: string) {
+    this.newCategory = category;
+    this.cdr.markForCheck();
+  }
+
   add() {
     const listId = this.selectedListId();
     if (!listId || !this.newName.trim()) return;
@@ -119,6 +161,7 @@ export class Handleliste implements OnInit {
       this.newName = '';
       this.newCategory = '';
       this.newQuantity = 1;
+      this.nameField()?.reset();
     });
   }
 

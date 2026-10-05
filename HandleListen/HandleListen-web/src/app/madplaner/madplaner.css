@@ -1,0 +1,26 @@
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0 0 1rem;
+}
+
+.tab-content {
+  padding: 1.5rem 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.6;
+}

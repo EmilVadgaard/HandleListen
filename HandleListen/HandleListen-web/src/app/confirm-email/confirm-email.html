@@ -1,0 +1,25 @@
+<div class="auth-page">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Bekræft email</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @switch (status()) {
+        @case ('loading') {
+          <div class="centered">
+            <mat-spinner diameter="32"></mat-spinner>
+          </div>
+        }
+        @case ('success') {
+          <p>Din email er nu bekræftet.</p>
+        }
+        @case ('error') {
+          <p>Linket er ugyldigt eller udløbet.</p>
+        }
+      }
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <a mat-button routerLink="/login">Til login</a>
+    </mat-card-actions>
+  </mat-card>
+</div>

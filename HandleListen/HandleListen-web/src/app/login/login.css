@@ -18,3 +18,10 @@
   font-size: 0.875rem;
   margin: -0.25rem 0 0.75rem;
 }
+
+.forgot-password-link {
+  display: block;
+  text-align: center;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}

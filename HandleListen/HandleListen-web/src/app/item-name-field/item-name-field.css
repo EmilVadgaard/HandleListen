@@ -1,0 +1,23 @@
+.name-field {
+  width: 100%;
+}
+
+.badge {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.badge-known {
+  color: #64b5f6;
+}
+
+.badge-history {
+  color: #bdbdbd;
+}
+
+.save-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}

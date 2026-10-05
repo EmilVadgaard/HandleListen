@@ -50,10 +50,11 @@
 } @else {
     <mat-card class="add-item-card">
         <div class="add-item-row">
-            <mat-form-field appearance="outline" class="name-field" subscriptSizing="dynamic">
-                <mat-label>Vare</mat-label>
-                <input matInput [(ngModel)]="newName" (keyup.enter)="add()" />
-            </mat-form-field>
+            <app-item-name-field
+                class="name-field"
+                [(name)]="newName"
+                (categorySuggested)="onCategorySuggested($event)"
+                (enterPressed)="add()" />
             <mat-form-field appearance="outline" class="category-field" subscriptSizing="dynamic">
                 <mat-label>Kategori</mat-label>
                 <input matInput [(ngModel)]="newCategory" (keyup.enter)="add()" />

@@ -1,0 +1,73 @@
+<h2 mat-dialog-title>Del kalender</h2>
+
+<mat-dialog-content>
+  <h3 class="section-heading">Deler med</h3>
+  @if (members().length > 1) {
+    <mat-list>
+      @for (member of members(); track member.userId) {
+        <mat-list-item>
+          <span matListItemTitle>{{ member.email }}</span>
+        </mat-list-item>
+      }
+    </mat-list>
+    <button mat-button color="warn" (click)="leaveCalendar()">
+      <mat-icon>logout</mat-icon>
+      Forlad delt kalender
+    </button>
+  } @else {
+    <p class="hint-text">Du deler endnu ikke din kalender med nogen.</p>
+  }
+
+  @if (incomingInvites().length > 0) {
+    <mat-divider class="section-divider"></mat-divider>
+    <h3 class="section-heading">Modtagne invitationer</h3>
+    <mat-list>
+      @for (invite of incomingInvites(); track invite.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ invite.fromEmail }}</span>
+          <div matListItemMeta class="invite-actions">
+            <button mat-icon-button color="primary" (click)="accept(invite)" aria-label="Accepter">
+              <mat-icon>check</mat-icon>
+            </button>
+            <button mat-icon-button (click)="decline(invite)" aria-label="Afvis">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+
+  <mat-divider class="section-divider"></mat-divider>
+  <h3 class="section-heading">Invitér</h3>
+  <div class="invite-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput [(ngModel)]="inviteEmail" name="inviteEmail" placeholder="navn@eksempel.dk" (keyup.enter)="sendInvite()" />
+    </mat-form-field>
+    <button mat-icon-button color="primary" (click)="sendInvite()" aria-label="Send invitation" [disabled]="!inviteEmail.trim()">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+  @if (inviteError()) {
+    <p class="error-text">{{ inviteError() }}</p>
+  }
+
+  @if (outgoingInvites().length > 0) {
+    <h3 class="section-heading">Afventer svar</h3>
+    <mat-list>
+      @for (invite of outgoingInvites(); track invite.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ invite.toEmail }}</span>
+          <button mat-icon-button matListItemMeta (click)="cancel(invite)" aria-label="Annullér invitation">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Luk</button>
+</mat-dialog-actions>

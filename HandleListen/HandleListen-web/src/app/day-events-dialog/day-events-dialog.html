@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>{{ dateLabel }}</h2>
+
+<mat-dialog-content>
+  @if (events().length > 0) {
+    <mat-list>
+      @for (event of events(); track event.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ event.title }}</span>
+          <span matListItemLine>{{ event.time ? event.time.slice(0, 5) : 'Hele dagen' }}</span>
+          <div matListItemMeta class="event-actions">
+            <button mat-icon-button (click)="startEdit(event)" aria-label="Redigér">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="remove(event)" aria-label="Slet">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </mat-list-item>
+      }
+    </mat-list>
+    <mat-divider class="section-divider"></mat-divider>
+  }
+
+  <h3 class="section-heading">{{ editingId !== null ? 'Redigér event' : 'Nyt event' }}</h3>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Titel</mat-label>
+    <input matInput [(ngModel)]="title" name="title" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Beskrivelse</mat-label>
+    <textarea matInput [(ngModel)]="description" name="description" rows="2"></textarea>
+  </mat-form-field>
+
+  <mat-checkbox [(ngModel)]="allDay" class="all-day-checkbox">Hele dagen</mat-checkbox>
+
+  @if (!allDay) {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Tidspunkt (tt:mm)</mat-label>
+      <input matInput type="text" placeholder="f.eks. 14:30" maxlength="5" [(ngModel)]="time" name="time" />
+    </mat-form-field>
+  }
+
+  <div class="reminder-row">
+    <mat-form-field appearance="outline" class="reminder-select">
+      <mat-label>Påmindelse</mat-label>
+      <mat-select [(ngModel)]="reminderMode" name="reminderMode">
+        <mat-option value="none">Ingen</mat-option>
+        <mat-option value="hours">Timer før</mat-option>
+        <mat-option value="days">Dage før</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (reminderMode !== 'none') {
+      <mat-form-field appearance="outline" class="reminder-value">
+        <mat-label>{{ reminderMode === 'hours' ? 'Timer' : 'Dage' }}</mat-label>
+        <input matInput type="number" [min]="1" [max]="reminderMode === 'hours' ? 24 : 365" [(ngModel)]="reminderValue" name="reminderValue" />
+      </mat-form-field>
+    }
+  </div>
+
+  @if (formError()) {
+    <p class="error-text">{{ formError() }}</p>
+  }
+
+  <div class="form-actions">
+    @if (editingId !== null) {
+      <button mat-button (click)="startAdd()">Annullér redigering</button>
+    }
+    <button mat-flat-button color="primary" (click)="save()" [disabled]="!title.trim()">
+      {{ editingId !== null ? 'Gem ændringer' : 'Tilføj event' }}
+    </button>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Luk</button>
+</mat-dialog-actions>

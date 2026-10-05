@@ -1,0 +1,37 @@
+<div class="toolbar">
+    <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+        <mat-label>Søg opskrifter eller tags</mat-label>
+        <input matInput [(ngModel)]="searchQuery" placeholder="f.eks. vegetar" />
+        <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+    <button
+        mat-icon-button
+        (click)="openShareDialog()"
+        aria-label="Del opskriftsbog"
+        [matBadge]="pendingInviteCount() > 0 ? pendingInviteCount() : null"
+        matBadgeColor="warn"
+        matBadgeSize="small">
+        <mat-icon>people</mat-icon>
+    </button>
+</div>
+
+<div class="recipe-grid">
+    <mat-card class="recipe-card add-card" (click)="openAddRecipe()">
+        <mat-icon class="add-icon">add</mat-icon>
+    </mat-card>
+
+    @for (recipe of filteredRecipes(); track recipe.id) {
+        <mat-card class="recipe-card" (click)="openRecipe(recipe)">
+            <mat-card-content>
+                <h3 class="recipe-title">{{ recipe.title }}</h3>
+                @if (recipe.tags.length > 0) {
+                    <mat-chip-set class="recipe-tags">
+                        @for (tag of recipe.tags; track tag.id) {
+                            <mat-chip disabled>{{ tag.tag }}</mat-chip>
+                        }
+                    </mat-chip-set>
+                }
+            </mat-card-content>
+        </mat-card>
+    }
+</div>

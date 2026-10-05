@@ -1,0 +1,43 @@
+<div class="calendar-toolbar">
+    <button mat-icon-button (click)="prevMonth()" aria-label="Forrige måned">
+        <mat-icon>chevron_left</mat-icon>
+    </button>
+    <h1 class="month-label">{{ monthLabel() }}</h1>
+    <button mat-icon-button (click)="nextMonth()" aria-label="Næste måned">
+        <mat-icon>chevron_right</mat-icon>
+    </button>
+    <button mat-button (click)="goToToday()" class="today-button">I dag</button>
+    <button
+        mat-icon-button
+        (click)="openShareDialog()"
+        aria-label="Del kalender"
+        [matBadge]="pendingInviteCount() > 0 ? pendingInviteCount() : null"
+        matBadgeColor="warn"
+        matBadgeSize="small">
+        <mat-icon>people</mat-icon>
+    </button>
+</div>
+
+<div class="calendar-grid">
+    @for (label of weekdayLabels; track label) {
+        <div class="weekday-cell">{{ label }}</div>
+    }
+    @for (day of gridDays(); track day.getTime()) {
+        <div
+            class="day-cell"
+            [class.other-month]="!isCurrentMonth(day)"
+            [class.today]="isToday(day)"
+            (click)="openDay(day)">
+            <span class="day-number">{{ day.getDate() }}</span>
+            @for (event of eventsForDay(day).slice(0, 3); track event.id) {
+                <div class="event-chip">{{ event.title }}</div>
+            }
+            @if (eventsForDay(day).length > 3) {
+                <div class="event-more">+{{ eventsForDay(day).length - 3 }} mere</div>
+            }
+            @if (eventsForDay(day).length > 0) {
+                <div class="event-dot"></div>
+            }
+        </div>
+    }
+</div>

@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, inject, output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -14,10 +14,6 @@ import { MatIconModule } from '@angular/material/icon';
 
 export class Header {
   auth = inject(AuthService);
-  private router = inject(Router);
 
-  logout() {
-    this.auth.logout();
-    this.router.navigate(['/login']);
-  }
+  menuToggle = output<void>();
 }

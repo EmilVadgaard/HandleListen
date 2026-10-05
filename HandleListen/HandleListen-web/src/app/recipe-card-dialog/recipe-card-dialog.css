@@ -1,0 +1,60 @@
+.full-width {
+  width: 100%;
+}
+
+.tags-row {
+  margin-bottom: 0.75rem;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.875rem;
+}
+
+.section-heading {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.description-text {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.save-details-button {
+  margin-bottom: 0.5rem;
+}
+
+.section-divider {
+  margin: 1rem 0;
+}
+
+.add-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.name-field {
+  flex: 2 1 10rem;
+}
+
+.quantity-field {
+  flex: 0 1 6rem;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.quantity-value {
+  min-width: 1.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+

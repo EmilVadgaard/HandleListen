@@ -1,3 +1,49 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.app-shell {
+  height: 100%;
+}
+
+mat-sidenav {
+  width: 15rem;
+}
+
+.active-link {
+  background: var(--mat-sys-secondary-container, rgba(0, 0, 0, 0.06));
+}
+
+.logout-item {
+  width: 100%;
+  text-align: left;
+}
+
+.nav-rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 0.4rem;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: var(--mat-sys-primary);
+  cursor: pointer;
+  z-index: 3;
+  transition: width 0.15s ease, opacity 0.15s ease;
+}
+
+.nav-rail:hover {
+  width: 0.75rem;
+}
+
+.nav-rail.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 main {
   display: block;
   max-width: 56rem;

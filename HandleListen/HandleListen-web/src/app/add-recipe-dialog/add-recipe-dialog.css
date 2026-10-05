@@ -1,0 +1,20 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.section-heading {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.tags-row {
+  margin-bottom: 0.5rem;
+}
+
+.error-text {
+  color: #b3261e;
+  font-size: 0.875rem;
+  margin: -0.5rem 0 0.5rem;
+}

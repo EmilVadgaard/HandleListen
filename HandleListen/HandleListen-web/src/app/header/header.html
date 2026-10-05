@@ -1,11 +1,14 @@
 <mat-toolbar color="primary">
+  @if (auth.isLoggedIn()) {
+    <button mat-icon-button (click)="menuToggle.emit()" aria-label="Åbn menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
   <mat-icon>shopping_cart</mat-icon>
   <span class="app-title">Min planlægger</span>
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
-    <a mat-button routerLink="/handleliste">Handleliste</a>
     <span class="user-email">{{ auth.email() }}</span>
-    <button mat-stroked-button (click)="logout()">Log ud</button>
   } @else {
     <a mat-button routerLink="/login">Log ind</a>
   }

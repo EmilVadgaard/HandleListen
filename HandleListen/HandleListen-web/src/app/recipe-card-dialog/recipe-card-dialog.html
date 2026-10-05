@@ -1,0 +1,138 @@
+@if (!editing()) {
+  <h2 mat-dialog-title>{{ recipe().title }}</h2>
+
+  <mat-dialog-content>
+    @if (recipe().tags.length > 0) {
+      <mat-chip-set class="tags-row">
+        @for (tag of recipe().tags; track tag.id) {
+          <mat-chip>{{ tag.tag }}</mat-chip>
+        }
+      </mat-chip-set>
+    }
+
+    <h3 class="section-heading">Fremgangsmåde</h3>
+    @if (recipe().description) {
+      <p class="description-text">{{ recipe().description }}</p>
+    } @else {
+      <p class="hint-text">Ingen fremgangsmåde endnu.</p>
+    }
+
+    <h3 class="section-heading">Ingredienser</h3>
+    @if (ingredients().length === 0) {
+      <p class="hint-text">Ingen ingredienser endnu.</p>
+    } @else {
+      <mat-list>
+        @for (ingredient of ingredients(); track ingredient.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{ ingredient.quantity }}x {{ ingredient.name }}</span>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Luk</button>
+    <button mat-flat-button color="primary" (click)="startEditing()">
+      <mat-icon>edit</mat-icon>
+      Rediger
+    </button>
+  </mat-dialog-actions>
+} @else {
+  <h2 mat-dialog-title>Rediger opskrift</h2>
+
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Titel</mat-label>
+      <input matInput [(ngModel)]="titleDraft" name="titleDraft" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fremgangsmåde</mat-label>
+      <textarea matInput rows="5" [(ngModel)]="descriptionDraft" name="descriptionDraft"></textarea>
+    </mat-form-field>
+
+    <button mat-stroked-button class="full-width save-details-button" (click)="saveDetails()" [disabled]="!titleDraft.trim()">
+      Gem titel og fremgangsmåde
+    </button>
+
+    <mat-divider class="section-divider"></mat-divider>
+    <h3 class="section-heading">Tags</h3>
+    @if (recipe().tags.length > 0) {
+      <mat-chip-set class="tags-row">
+        @for (tag of recipe().tags; track tag.id) {
+          <mat-chip (removed)="removeTag(tag.id)">
+            {{ tag.tag }}
+            <button matChipRemove aria-label="Fjern tag">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        }
+      </mat-chip-set>
+    }
+    <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+      <mat-label>Tilføj tag</mat-label>
+      <input
+        matInput
+        [(ngModel)]="tagInput"
+        [matAutocomplete]="tagAuto"
+        placeholder="f.eks. vegetar"
+        (keyup.enter)="addTag(tagInput)" />
+      <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="onTagOptionSelected($event)">
+        @for (suggestion of filteredTagSuggestions(); track suggestion) {
+          <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-divider class="section-divider"></mat-divider>
+    <h3 class="section-heading">Ingredienser</h3>
+
+    <div class="add-item-row">
+      <app-item-name-field
+        class="name-field"
+        label="Ingrediens"
+        [(name)]="newIngredientName"
+        (enterPressed)="addIngredient()" />
+      <mat-form-field appearance="outline" class="quantity-field" subscriptSizing="dynamic">
+        <mat-label>Antal</mat-label>
+        <input matInput type="number" min="1" [(ngModel)]="newIngredientQuantity" (keyup.enter)="addIngredient()" />
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="addIngredient()" aria-label="Tilføj ingrediens">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    @if (ingredients().length > 0) {
+      <mat-list>
+        @for (ingredient of ingredients(); track ingredient.id) {
+          <mat-list-item class="item-row">
+            <span matListItemTitle>{{ ingredient.name }}</span>
+            <div matListItemMeta class="item-actions">
+              <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity - 1)" [disabled]="ingredient.quantity <= 1" aria-label="Færre">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="quantity-value">{{ ingredient.quantity }}</span>
+              <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity + 1)" aria-label="Flere">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button mat-icon-button (click)="removeIngredient(ingredient.id)" aria-label="Fjern ingrediens">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+
+    <mat-divider class="section-divider"></mat-divider>
+    <button mat-button color="warn" (click)="deleteRecipe()">
+      <mat-icon>delete_outline</mat-icon>
+      Slet opskrift
+    </button>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="stopEditing()">Færdig</button>
+  </mat-dialog-actions>
+}

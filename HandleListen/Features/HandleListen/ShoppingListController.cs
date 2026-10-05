@@ -9,12 +9,20 @@ using Microsoft.AspNetCore.Authorization;
 public class ShoppingListController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly AppNotifier _notifier;
     private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    public ShoppingListController(AppDbContext context)
+    public ShoppingListController(AppDbContext context, AppNotifier notifier)
     {
         _context = context;
+        _notifier = notifier;
     }
+
+    private async Task<List<string>> GetAccessibleUserIdsAsync(int listId, string ownerId) =>
+        [ownerId, .. await _context.ShoppingListGuests
+            .Where(g => g.ShoppingListId == listId)
+            .Select(g => g.UserId)
+            .ToListAsync()];
 
     private bool IsAccessible(ShoppingList list) =>
         list.UserId == UserId || _context.ShoppingListGuests.Any(g => g.ShoppingListId == list.Id && g.UserId == UserId);
@@ -60,7 +68,9 @@ public class ShoppingListController : ControllerBase
         if (item is null || !IsAccessible(item)) return NotFound();
 
         item.Name = request.Name;
+        var affectedUserIds = await GetAccessibleUserIdsAsync(id, item.UserId);
         await _context.SaveChangesAsync();
+        await _notifier.NotifyListsChanged(affectedUserIds);
         return NoContent();
     }
 
@@ -72,10 +82,13 @@ public class ShoppingListController : ControllerBase
             .FirstOrDefaultAsync(x => x.Id == id);
         if (item is null) return NotFound();
 
+        var affectedUserIds = await GetAccessibleUserIdsAsync(id, item.UserId);
+
         var guests = _context.ShoppingListGuests.Where(g => g.ShoppingListId == id);
         _context.ShoppingListGuests.RemoveRange(guests);
         _context.ShoppingLists.Remove(item);
         await _context.SaveChangesAsync();
+        await _notifier.NotifyListsChanged(affectedUserIds);
         return NoContent();
     }
 
@@ -113,6 +126,7 @@ public class ShoppingListController : ControllerBase
 
         _context.ShoppingListGuests.Add(new ShoppingListGuest { ShoppingListId = id, UserId = guestUser.Id });
         await _context.SaveChangesAsync();
+        await _notifier.NotifyListsChanged([guestUser.Id]);
         return new GuestDto(guestUser.Id, guestUser.Email!);
     }
 
@@ -128,6 +142,7 @@ public class ShoppingListController : ControllerBase
         {
             _context.ShoppingListGuests.Remove(guest);
             await _context.SaveChangesAsync();
+            await _notifier.NotifyListsChanged([guestId]);
         }
 
         return NoContent();

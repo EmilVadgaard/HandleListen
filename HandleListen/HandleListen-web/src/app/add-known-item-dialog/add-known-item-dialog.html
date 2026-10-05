@@ -1,0 +1,43 @@
+<h2 mat-dialog-title>Tilføj "{{ data.name }}" som kendt item</h2>
+
+<mat-dialog-content>
+  <mat-radio-group [(ngModel)]="mode" class="mode-group">
+    <mat-radio-button value="new">Nyt kendt item</mat-radio-button>
+    <mat-radio-button value="alias">Alias til eksisterende item</mat-radio-button>
+  </mat-radio-group>
+
+  @if (mode() === 'new') {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Kategori</mat-label>
+      <mat-select [(ngModel)]="category">
+        @for (c of categories; track c) {
+          <mat-option [value]="c">{{ c }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  } @else {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Eksisterende item</mat-label>
+      <input
+        matInput
+        [ngModel]="existingValue()"
+        (ngModelChange)="onExistingInputChange($event)"
+        [matAutocomplete]="auto"
+        placeholder="Søg efter vare..." />
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayExisting">
+        @for (item of existingResults(); track item.id) {
+          <mat-option [value]="item">{{ item.canonicalName }} ({{ item.category }})</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  }
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuller</button>
+  <button mat-flat-button color="primary" [disabled]="saving()" (click)="save()">Gem</button>
+</mat-dialog-actions>

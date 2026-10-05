@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Ny opskrift</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Titel</mat-label>
+    <input matInput [(ngModel)]="title" name="title" (keyup.enter)="save()" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Fremgangsmåde (valgfrit)</mat-label>
+    <textarea matInput rows="5" [(ngModel)]="description" name="description"></textarea>
+  </mat-form-field>
+
+  <h3 class="section-heading">Tags</h3>
+  @if (tags().length > 0) {
+    <mat-chip-set class="tags-row">
+      @for (tag of tags(); track tag) {
+        <mat-chip (removed)="removeTag(tag)">
+          {{ tag }}
+          <button matChipRemove aria-label="Fjern tag">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+      }
+    </mat-chip-set>
+  }
+  <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+    <mat-label>Tilføj tag</mat-label>
+    <input
+      matInput
+      [(ngModel)]="tagInput"
+      [matAutocomplete]="tagAuto"
+      placeholder="f.eks. vegetar"
+      (keyup.enter)="addTag(tagInput)" />
+    <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="onTagOptionSelected($event)">
+      @for (suggestion of filteredTagSuggestions(); track suggestion) {
+        <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuller</button>
+  <button mat-flat-button color="primary" [disabled]="!title.trim() || saving()" (click)="save()">Gem</button>
+</mat-dialog-actions>

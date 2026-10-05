@@ -18,11 +18,6 @@ a[mat-button] {
   color: var(--mat-sys-on-primary);
 }
 
-button[mat-stroked-button] {
-  color: var(--mat-sys-on-primary);
-  border-color: var(--mat-sys-on-primary);
-}
-
 @media (max-width: 600px) {
   .user-email {
     display: none;

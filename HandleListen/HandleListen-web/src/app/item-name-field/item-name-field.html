@@ -1,0 +1,13 @@
+<mat-form-field appearance="outline" class="name-field" subscriptSizing="dynamic">
+  <mat-label>{{ label() }}</mat-label>
+  <input matInput [ngModel]="name()" (ngModelChange)="onNameChange($event)" (keyup.enter)="enterPressed.emit()" />
+  @if (suggestion()?.source === 'Known') {
+    <mat-icon matSuffix class="badge badge-known" matTooltip="Genkendt vare fra det fælles katalog">check_circle</mat-icon>
+  } @else if (suggestion()?.source === 'History') {
+    <mat-icon matSuffix class="badge badge-history" matTooltip="Du har brugt dette navn før">check_circle</mat-icon>
+  } @else if (canCurate() && name().trim()) {
+    <button mat-icon-button matSuffix (click)="openAddKnownItemDialog()" aria-label="Tilføj som kendt item" matTooltip="Tilføj som kendt item">
+      <mat-icon class="save-icon">save</mat-icon>
+    </button>
+  }
+</mat-form-field>
