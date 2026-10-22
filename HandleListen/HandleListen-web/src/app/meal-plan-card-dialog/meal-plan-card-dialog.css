@@ -12,3 +12,38 @@
   color: var(--mat-sys-on-surface-variant, #555);
   font-size: 0.875rem;
 }
+
+.category-heading {
+  margin: 0.75rem 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.description-text {
+  white-space: pre-wrap;
+}
+
+.full-recipes-print {
+  display: none;
+}
+
+.recipe-print-title {
+  margin-top: 1.5rem;
+}
+
+.print-ingredient-list {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.recipe-divider {
+  margin: 1.5rem 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+@media print {
+  .full-recipes-print {
+    display: block;
+  }
+}

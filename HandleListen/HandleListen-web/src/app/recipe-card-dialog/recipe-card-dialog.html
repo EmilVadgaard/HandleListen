@@ -1,4 +1,5 @@
 @if (!editing()) {
+  <div class="print-area">
   <h2 mat-dialog-title>{{ recipe().title }}</h2>
 
   <mat-dialog-content>
@@ -38,11 +39,16 @@
       }
     }
   </mat-dialog-content>
+  </div>
 
   <mat-dialog-actions align="end">
     <button mat-button [disabled]="sharing()" (click)="toggleShare()">
       <mat-icon>{{ sharedRecipeId() === null ? 'share' : 'remove_circle_outline' }}</mat-icon>
       {{ sharedRecipeId() === null ? 'Del til forum' : 'Fjern fra forum' }}
+    </button>
+    <button mat-button (click)="print()">
+      <mat-icon>print</mat-icon>
+      Print
     </button>
     <button mat-button (click)="close()">Luk</button>
     <button mat-flat-button color="primary" (click)="startEditing()">

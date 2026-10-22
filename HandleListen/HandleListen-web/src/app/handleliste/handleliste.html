@@ -43,6 +43,11 @@
                 <mat-icon>call_merge</mat-icon>
             </button>
         }
+        @if (selectedList()) {
+            <button mat-icon-button class="tab-add" (click)="print()" aria-label="Print liste">
+                <mat-icon>print</mat-icon>
+            </button>
+        }
     }
 </div>
 
@@ -91,6 +96,8 @@
             <p>Listen er tom.</p>
         </div>
     } @else {
+        <div class="print-area">
+        <h1 class="print-only-title">{{ selectedList()?.name }}</h1>
         @for (group of groupedItems(); track group.category) {
             <h2 class="category-heading">{{ group.category }}</h2>
             <mat-list>
@@ -132,17 +139,17 @@
                         <mat-list-item class="item-row">
                             <span matListItemTitle>{{ item.name }}</span>
                             <div matListItemMeta class="item-actions">
-                                <button mat-icon-button (click)="startEditItem(item)" aria-label="Redigér vare">
+                                <button mat-icon-button class="no-print" (click)="startEditItem(item)" aria-label="Redigér vare">
                                     <mat-icon>edit</mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="quantity(item, item.quantity - 1)" [disabled]="item.quantity <= 1" aria-label="Færre">
+                                <button mat-icon-button class="no-print" (click)="quantity(item, item.quantity - 1)" [disabled]="item.quantity <= 1" aria-label="Færre">
                                     <mat-icon>remove</mat-icon>
                                 </button>
                                 <span class="quantity-value">{{ item.quantity }}</span>
-                                <button mat-icon-button (click)="quantity(item, item.quantity + 1)" aria-label="Flere">
+                                <button mat-icon-button class="no-print" (click)="quantity(item, item.quantity + 1)" aria-label="Flere">
                                     <mat-icon>add</mat-icon>
                                 </button>
-                                <button mat-icon-button (click)="remove(item.id)" aria-label="Fjern vare">
+                                <button mat-icon-button class="no-print" (click)="remove(item.id)" aria-label="Fjern vare">
                                     <mat-icon>delete_outline</mat-icon>
                                 </button>
                             </div>
@@ -151,5 +158,6 @@
                 }
             </mat-list>
         }
+        </div>
     }
 }

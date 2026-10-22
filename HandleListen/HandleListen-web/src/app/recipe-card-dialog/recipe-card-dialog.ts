@@ -276,6 +276,10 @@ export class RecipeCardDialog implements OnDestroy {
     });
   }
 
+  print() {
+    window.print();
+  }
+
   close() {
     this.dialogRef.close(this.changed ? { updated: this.recipe() } : undefined);
   }

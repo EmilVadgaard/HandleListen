@@ -1,28 +1,71 @@
-<h2 mat-dialog-title>{{ plan.name }}</h2>
+<div [class.print-area]="!printingFullRecipes()">
+  <h2 mat-dialog-title>{{ plan.name }}</h2>
 
-<mat-dialog-content>
-  <h3 class="section-heading">Opskrifter</h3>
-  @if (plan.recipes.length === 0) {
-    <p class="hint-text">Ingen opskrifter i denne madplan.</p>
-  } @else {
-    <mat-list>
-      @for (recipe of plan.recipes; track recipe.id) {
-        <mat-list-item>
-          <span matListItemTitle>{{ recipe.title }}</span>
-        </mat-list-item>
+  <mat-dialog-content>
+    <h3 class="section-heading">Opskrifter</h3>
+    @if (plan.recipes.length === 0) {
+      <p class="hint-text">Ingen opskrifter i denne madplan.</p>
+    } @else {
+      <mat-list>
+        @for (recipe of plan.recipes; track recipe.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{ recipe.title }}</span>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+
+    <mat-divider class="section-divider no-print"></mat-divider>
+    <button mat-button color="warn" class="no-print" (click)="deletePlan()">
+      <mat-icon>delete_outline</mat-icon>
+      Slet madplan
+    </button>
+  </mat-dialog-content>
+</div>
+
+@if (printingFullRecipes()) {
+  <div class="print-area full-recipes-print">
+    <h1 class="print-only-title">{{ plan.name }}</h1>
+    @for (entry of fullRecipesForPrint(); track entry.recipe.id) {
+      <h2 class="recipe-print-title">{{ entry.recipe.title }}</h2>
+
+      <h4 class="section-heading">Fremgangsmåde</h4>
+      @if (entry.recipe.description) {
+        <p class="description-text">{{ entry.recipe.description }}</p>
+      } @else {
+        <p class="hint-text">Ingen fremgangsmåde endnu.</p>
       }
-    </mat-list>
-  }
 
-  <mat-divider class="section-divider"></mat-divider>
-  <button mat-button color="warn" (click)="deletePlan()">
-    <mat-icon>delete_outline</mat-icon>
-    Slet madplan
-  </button>
-</mat-dialog-content>
+      <h4 class="section-heading">Ingredienser</h4>
+      @for (group of groupIngredients(entry.ingredients); track group.category) {
+        <h5 class="category-heading">{{ group.category }}</h5>
+        <ul class="print-ingredient-list">
+          @for (ingredient of group.items; track ingredient.id) {
+            <li>
+              {{ ingredient.quantity }}x {{ ingredient.name }}
+              @if (ingredient.amount) {
+                — {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}
+              }
+            </li>
+          }
+        </ul>
+      }
+
+      <hr class="recipe-divider" />
+    }
+  </div>
+}
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="close()">Luk</button>
+  <button mat-button (click)="printNamesOnly()">
+    <mat-icon>print</mat-icon>
+    Print (kun navne)
+  </button>
+  <button mat-button (click)="printWithRecipes()">
+    <mat-icon>print</mat-icon>
+    Print med opskrifter
+  </button>
   <button mat-flat-button color="primary" (click)="openGenerateDialog()">
     <mat-icon>shopping_cart</mat-icon>
     Generer liste

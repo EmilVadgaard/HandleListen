@@ -39,6 +39,8 @@ export class Handleliste implements OnInit {
   isAddingList = signal(false);
   newListName = '';
 
+  selectedList = computed(() => this.lists().find(l => l.id === this.selectedListId()) ?? null);
+
   groupedItems = computed(() => {
     const groups = new Map<string, ShoppingItem[]>();
     for (const item of this.items()) {
@@ -239,5 +241,9 @@ export class Handleliste implements OnInit {
       this.editingItemId.set(null);
       this.cdr.markForCheck();
     });
+  }
+
+  print() {
+    window.print();
   }
 }

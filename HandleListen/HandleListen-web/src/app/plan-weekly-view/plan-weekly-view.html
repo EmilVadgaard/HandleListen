@@ -14,7 +14,7 @@
                   <span class="todo-time">{{ todo.time.slice(0, 5) }}</span>
                 }
               </span>
-              <div matListItemMeta class="todo-actions">
+              <div matListItemMeta class="todo-actions no-print">
                 <button mat-icon-button (click)="startEdit(todo)" aria-label="Redigér">
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -28,7 +28,7 @@
       }
 
       @if (addingForDay === day.dayIndex) {
-        <div class="inline-form">
+        <div class="inline-form no-print">
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Titel</mat-label>
             <input matInput [(ngModel)]="title" name="title" (keyup.enter)="save()" />
@@ -48,7 +48,7 @@
           </div>
         </div>
       } @else {
-        <button mat-button class="add-button" (click)="startAdd(day.dayIndex)">
+        <button mat-button class="add-button no-print" (click)="startAdd(day.dayIndex)">
           <mat-icon>add</mat-icon>
           Todo
         </button>

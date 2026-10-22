@@ -14,11 +14,16 @@
         Aktivér
       </button>
     }
+    <button mat-icon-button (click)="print()" aria-label="Print plan">
+      <mat-icon>print</mat-icon>
+    </button>
     <button mat-icon-button (click)="openSettings()" aria-label="Plan-indstillinger">
       <mat-icon>settings</mat-icon>
     </button>
   </div>
 
+  <div class="print-area">
+  <h1 class="print-only-title">{{ plan()!.name }}</h1>
   @switch (plan()!.type) {
     @case ('Standard') {
       <app-plan-standard-view [plan]="plan()!" [todos]="todos()" (changed)="refresh()" />
@@ -30,4 +35,5 @@
       <app-plan-monthly-view [plan]="plan()!" [todos]="todos()" (changed)="refresh()" />
     }
   }
+  </div>
 }

@@ -9,3 +9,34 @@ body {
 a {
   color: var(--mat-sys-primary);
 }
+
+.print-only-title {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only-title {
+    display: block;
+    margin: 0 0 1rem;
+  }
+}

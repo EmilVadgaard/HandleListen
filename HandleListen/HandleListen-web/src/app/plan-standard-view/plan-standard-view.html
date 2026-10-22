@@ -1,17 +1,17 @@
 <div class="todo-column" cdkDropList (cdkDropListDropped)="drop($event)">
   @for (todo of orderedTodos(); track todo.id) {
     <div class="todo-row" cdkDrag>
-      <mat-icon class="drag-handle" cdkDragHandle>drag_indicator</mat-icon>
+      <mat-icon class="drag-handle no-print" cdkDragHandle>drag_indicator</mat-icon>
       <mat-checkbox [checked]="todo.done" (change)="toggleDone(todo)"></mat-checkbox>
       <span class="todo-title" [class.done]="todo.done">{{ todo.title }}</span>
-      <button mat-icon-button (click)="deleteTodo(todo)" aria-label="Slet todo">
+      <button mat-icon-button class="no-print" (click)="deleteTodo(todo)" aria-label="Slet todo">
         <mat-icon>delete_outline</mat-icon>
       </button>
     </div>
   }
 </div>
 
-<div class="add-row">
+<div class="add-row no-print">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Ny todo</mat-label>
     <input matInput [(ngModel)]="newTitle" name="newTitle" (keyup.enter)="addTodo()" />
