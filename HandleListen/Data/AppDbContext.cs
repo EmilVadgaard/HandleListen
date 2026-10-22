@@ -39,6 +39,7 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Plan> Plans => Set<Plan>();
     public DbSet<PlanGuest> PlanGuests => Set<PlanGuest>();
     public DbSet<PlanTodo> PlanTodos => Set<PlanTodo>();
+    public DbSet<PersonalNote> PersonalNotes => Set<PersonalNote>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

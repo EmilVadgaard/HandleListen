@@ -7,6 +7,7 @@ export interface MealPlan {
     id: number;
     name: string;
     recipes: RecipeSummary[];
+    isCurrent: boolean;
 }
 
 export interface GeneratedListItem {

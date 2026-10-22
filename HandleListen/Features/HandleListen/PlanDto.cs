@@ -15,3 +15,7 @@ public record CreatePlanTodoRequest(string Title, int? DayIndex, int? DayOfMonth
 public record UpdatePlanTodoRequest(string Title, bool Done, int? DayIndex, int? DayOfMonth, TimeOnly? Time);
 
 public record ReorderTodosRequest(List<int> TodoIdsInOrder);
+
+public record UpcomingPlanTodoDto(int PlanId, string PlanName, int TodoId, string Title, bool Done, DateOnly Date, TimeOnly? Time);
+
+public record StandardPlanTodoDto(int PlanId, string PlanName, int TodoId, string Title, bool Done);

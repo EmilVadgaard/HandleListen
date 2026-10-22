@@ -59,6 +59,10 @@ export class MadplanerListe implements OnInit {
       if (!result) return;
       if (result.deleted) {
         this.plans.update(plans => plans.filter(p => p.id !== plan.id));
+      } else if (result.setCurrent) {
+        // Marking a plan as current un-sets whichever sibling plan was current before -
+        // refetch rather than patching local state so every row's flag stays correct.
+        this.refresh();
       }
     });
   }

@@ -16,10 +16,23 @@
     }
 
     <mat-divider class="section-divider no-print"></mat-divider>
-    <button mat-button color="warn" class="no-print" (click)="deletePlan()">
-      <mat-icon>delete_outline</mat-icon>
-      Slet madplan
-    </button>
+    <div class="current-row no-print">
+      @if (plan.isCurrent) {
+        <span class="current-badge">
+          <mat-icon>star</mat-icon>
+          Aktuel madplan
+        </span>
+      } @else {
+        <button mat-button color="primary" (click)="setCurrent()">
+          <mat-icon>star_outline</mat-icon>
+          Markér som aktuel
+        </button>
+      }
+      <button mat-button color="warn" (click)="deletePlan()">
+        <mat-icon>delete_outline</mat-icon>
+        Slet madplan
+      </button>
+    </div>
   </mat-dialog-content>
 </div>
 

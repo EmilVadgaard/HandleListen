@@ -1,6 +1,6 @@
 public record RecipeSummaryDto(int Id, string Title);
 
-public record MealPlanDto(int Id, string Name, List<RecipeSummaryDto> Recipes);
+public record MealPlanDto(int Id, string Name, List<RecipeSummaryDto> Recipes, bool IsCurrent);
 
 public record CreateMealPlanRequest(string Name, List<int> RecipeIds);
 

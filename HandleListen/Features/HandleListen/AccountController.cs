@@ -155,6 +155,14 @@ public class AccountController : ControllerBase
         _context.KnownItemRequests.RemoveRange(_context.KnownItemRequests.Where(r => r.RequestedByUserId == userId));
         _context.PrivacyPolicyAcceptances.RemoveRange(_context.PrivacyPolicyAcceptances.Where(p => p.UserId == userId));
 
+        var myPlans = await _context.Plans.Where(p => p.UserId == userId).ToListAsync();
+        var myPlanIds = myPlans.Select(p => p.Id).ToList();
+        _context.PlanTodos.RemoveRange(_context.PlanTodos.Where(t => myPlanIds.Contains(t.PlanId)));
+        _context.PlanGuests.RemoveRange(_context.PlanGuests.Where(g => myPlanIds.Contains(g.PlanId)));
+        _context.Plans.RemoveRange(myPlans);
+        _context.PlanGuests.RemoveRange(_context.PlanGuests.Where(g => g.UserId == userId));
+        _context.PersonalNotes.RemoveRange(_context.PersonalNotes.Where(n => n.UserId == userId));
+
         await _context.SaveChangesAsync();
 
         var deleteResult = await _userManager.DeleteAsync(user);

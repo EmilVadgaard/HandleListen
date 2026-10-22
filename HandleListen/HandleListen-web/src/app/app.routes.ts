@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { Login } from './login/login';
 import { Handleliste } from './handleliste/handleliste';
+import { MinSide } from './min-side/min-side';
 import { authGuard } from './auth-guard';
 import { ownerGuard } from './owner-guard';
 import { Register } from './register/register';
@@ -17,8 +18,9 @@ import { PrivacyPolicy } from './privacy-policy/privacy-policy';
 import { Settings } from './settings/settings';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'handleliste', pathMatch: 'full' },
+    { path: '', redirectTo: 'min-side', pathMatch: 'full' },
     { path: 'login', component: Login },
+    { path: 'min-side', component: MinSide, canActivate: [authGuard] },
     { path: 'handleliste', component: Handleliste, canActivate: [authGuard] },
     { path: 'kalender', component: Kalender, canActivate: [authGuard] },
     { path: 'madplaner', component: Madplaner, canActivate: [authGuard] },

@@ -1,0 +1,99 @@
+<h1 class="page-title">Min Side</h1>
+
+@if (currentMealPlan()) {
+  <mat-card class="meal-plan-card" (click)="openMealPlan(currentMealPlan()!)">
+    <mat-icon class="meal-plan-icon">restaurant_menu</mat-icon>
+    <div class="meal-plan-text">
+      <span class="meal-plan-label">Aktuel madplan</span>
+      <span class="meal-plan-name">{{ currentMealPlan()!.name }}</span>
+    </div>
+    <span class="meal-plan-count">{{ currentMealPlan()!.recipes.length }} opskrift(er)</span>
+  </mat-card>
+}
+
+<div class="min-side-layout">
+  <div class="sidebar">
+    <h3 class="sidebar-heading">Noter</h3>
+
+    <div class="add-note-form">
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>Ny note</mat-label>
+        <input matInput [(ngModel)]="newNoteText" name="newNoteText" (keyup.enter)="addNote()" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>Dato (valgfri - sætter den på tavlen)</mat-label>
+        <input matInput type="date" [(ngModel)]="newNoteDate" name="newNoteDate" />
+      </mat-form-field>
+      <button mat-stroked-button class="full-width" (click)="addNote()" [disabled]="!newNoteText.trim()">
+        <mat-icon>add</mat-icon>
+        Tilføj
+      </button>
+    </div>
+
+    @for (note of sidebarNotes(); track note.id) {
+      <mat-card class="sticky-note">
+        <span class="sticky-note-text">{{ note.text }}</span>
+        <button mat-icon-button (click)="deleteNote(note)" aria-label="Slet note">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-card>
+    }
+
+    @if (sidebarTodos().length > 0) {
+      <h3 class="sidebar-heading">Fra aktive planer</h3>
+      @for (todo of sidebarTodos(); track todo.todoId) {
+        <mat-card class="sticky-note">
+          <mat-checkbox [checked]="todo.done" disabled></mat-checkbox>
+          <span class="sticky-note-text" [class.done]="todo.done">
+            {{ todo.title }}
+            <span class="sticky-note-plan">{{ todo.planName }}</span>
+          </span>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <div class="feed">
+    @if (feedCards().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">today</mat-icon>
+        <p>Intet kommende lige nu.</p>
+      </div>
+    } @else {
+      @for (card of feedCards(); track card.kind + '-' + card.id) {
+        <mat-card class="feed-card">
+          <div class="feed-card-date">
+            {{ card.date }}
+            @if ('time' in card && card.time) {
+              <span class="feed-card-time">{{ card.time.slice(0, 5) }}</span>
+            }
+          </div>
+          @switch (card.kind) {
+            @case ('event') {
+              <mat-icon class="feed-card-icon">event</mat-icon>
+              <div class="feed-card-body">
+                <span class="feed-card-title">{{ card.title }}</span>
+                @if (card.description) {
+                  <span class="feed-card-description">{{ card.description }}</span>
+                }
+              </div>
+            }
+            @case ('note') {
+              <mat-icon class="feed-card-icon">sticky_note_2</mat-icon>
+              <div class="feed-card-body">
+                <span class="feed-card-title">{{ card.text }}</span>
+              </div>
+            }
+            @case ('todo') {
+              <mat-icon class="feed-card-icon">checklist</mat-icon>
+              <div class="feed-card-body">
+                <span class="feed-card-title" [class.done]="card.done">{{ card.title }}</span>
+                <span class="feed-card-description">{{ card.planName }}</span>
+              </div>
+            }
+          }
+        </mat-card>
+      }
+    }
+  </div>
+</div>

@@ -9,5 +9,5 @@ export const ownerGuard: CanActivateFn = () => {
   if (auth.isOwner()) {
     return true;
   }
-  return router.parseUrl('/handleliste');
+  return router.parseUrl('/min-side');
 };

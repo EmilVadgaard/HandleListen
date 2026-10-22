@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Plan, PlanDetail, PlanTodo, PlanType } from './plan';
+import { Plan, PlanDetail, PlanTodo, PlanType, UpcomingPlanTodo, StandardPlanTodo } from './plan';
 
 export interface Guest {
     id: string;
@@ -31,6 +31,14 @@ export class PlanService {
 
     getAll(): Observable<Plan[]> {
         return this.http.get<Plan[]>(this.baseUrl);
+    }
+
+    getUpcomingTodos(today: string, days = 30): Observable<UpcomingPlanTodo[]> {
+        return this.http.get<UpcomingPlanTodo[]>(`${this.baseUrl}/upcoming-todos`, { params: { today, days } });
+    }
+
+    getStandardTodos(): Observable<StandardPlanTodo[]> {
+        return this.http.get<StandardPlanTodo[]>(`${this.baseUrl}/standard-todos`);
     }
 
     getById(id: number): Observable<PlanDetail> {

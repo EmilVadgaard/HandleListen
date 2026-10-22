@@ -28,3 +28,21 @@ export interface PlanDetail {
     plan: Plan;
     todos: PlanTodo[];
 }
+
+export interface UpcomingPlanTodo {
+    planId: number;
+    planName: string;
+    todoId: number;
+    title: string;
+    done: boolean;
+    date: string;
+    time: string | null;
+}
+
+export interface StandardPlanTodo {
+    planId: number;
+    planName: string;
+    todoId: number;
+    title: string;
+    done: boolean;
+}

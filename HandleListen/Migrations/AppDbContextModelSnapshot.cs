@@ -35,7 +35,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("BlockerUserId", "BlockedUserId")
                         .IsUnique();
 
-                    b.ToTable("BlockedUsers");
+                    b.ToTable("BlockedUsers", (string)null);
                 });
 
             modelBuilder.Entity("Calendar", b =>
@@ -46,7 +46,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Calendars");
+                    b.ToTable("Calendars", (string)null);
                 });
 
             modelBuilder.Entity("CalendarEvent", b =>
@@ -91,7 +91,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("CalendarId");
 
-                    b.ToTable("CalendarEvents");
+                    b.ToTable("CalendarEvents", (string)null);
                 });
 
             modelBuilder.Entity("CalendarEventException", b =>
@@ -111,7 +111,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("CalendarEventId", "ExceptionDate")
                         .IsUnique();
 
-                    b.ToTable("CalendarEventExceptions");
+                    b.ToTable("CalendarEventExceptions", (string)null);
                 });
 
             modelBuilder.Entity("CalendarInvite", b =>
@@ -133,7 +133,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CalendarInvites");
+                    b.ToTable("CalendarInvites", (string)null);
                 });
 
             modelBuilder.Entity("CalendarMember", b =>
@@ -154,7 +154,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("CalendarId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("CalendarMembers");
+                    b.ToTable("CalendarMembers", (string)null);
                 });
 
             modelBuilder.Entity("DigestDelivery", b =>
@@ -178,7 +178,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("UserId", "Frequency", "SentDate")
                         .IsUnique();
 
-                    b.ToTable("DigestDeliveries");
+                    b.ToTable("DigestDeliveries", (string)null);
                 });
 
             modelBuilder.Entity("DigestPreference", b =>
@@ -199,7 +199,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("DigestPreferences");
+                    b.ToTable("DigestPreferences", (string)null);
                 });
 
             modelBuilder.Entity("EmailReminderDelivery", b =>
@@ -226,7 +226,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("CalendarEventId", "OccurrenceDate", "UserId")
                         .IsUnique();
 
-                    b.ToTable("EmailReminderDeliveries");
+                    b.ToTable("EmailReminderDeliveries", (string)null);
                 });
 
             modelBuilder.Entity("ForumSearchLog", b =>
@@ -244,7 +244,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ForumSearchLogs");
+                    b.ToTable("ForumSearchLogs", (string)null);
                 });
 
             modelBuilder.Entity("KnownItem", b =>
@@ -266,7 +266,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("KnownItems");
+                    b.ToTable("KnownItems", (string)null);
                 });
 
             modelBuilder.Entity("KnownItemAlias", b =>
@@ -289,7 +289,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("KnownItemId");
 
-                    b.ToTable("KnownItemAliases");
+                    b.ToTable("KnownItemAliases", (string)null);
                 });
 
             modelBuilder.Entity("KnownItemRequest", b =>
@@ -323,13 +323,16 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("KnownItemRequests");
+                    b.ToTable("KnownItemRequests", (string)null);
                 });
 
             modelBuilder.Entity("MealPlan", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCurrent")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -341,7 +344,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MealPlans");
+                    b.ToTable("MealPlans", (string)null);
                 });
 
             modelBuilder.Entity("MealPlanRecipe", b =>
@@ -362,7 +365,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("MealPlanRecipes");
+                    b.ToTable("MealPlanRecipes", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -557,6 +560,28 @@ namespace HandleListen.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PersonalNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly?>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PersonalNotes", (string)null);
+                });
+
             modelBuilder.Entity("Plan", b =>
                 {
                     b.Property<int>("Id")
@@ -591,7 +616,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Plans");
+                    b.ToTable("Plans", (string)null);
                 });
 
             modelBuilder.Entity("PlanGuest", b =>
@@ -612,7 +637,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("PlanId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("PlanGuests");
+                    b.ToTable("PlanGuests", (string)null);
                 });
 
             modelBuilder.Entity("PlanTodo", b =>
@@ -647,7 +672,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("PlanTodos");
+                    b.ToTable("PlanTodos", (string)null);
                 });
 
             modelBuilder.Entity("PrivacyPolicyAcceptance", b =>
@@ -665,7 +690,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PrivacyPolicyAcceptances");
+                    b.ToTable("PrivacyPolicyAcceptances", (string)null);
                 });
 
             modelBuilder.Entity("PushSubscription", b =>
@@ -690,7 +715,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("Token")
                         .IsUnique();
 
-                    b.ToTable("PushSubscriptions");
+                    b.ToTable("PushSubscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Recipe", b =>
@@ -712,7 +737,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipes");
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("RecipeBook", b =>
@@ -723,7 +748,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RecipeBooks");
+                    b.ToTable("RecipeBooks", (string)null);
                 });
 
             modelBuilder.Entity("RecipeBookInvite", b =>
@@ -745,7 +770,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RecipeBookInvites");
+                    b.ToTable("RecipeBookInvites", (string)null);
                 });
 
             modelBuilder.Entity("RecipeBookMember", b =>
@@ -766,7 +791,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("RecipeBookId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("RecipeBookMembers");
+                    b.ToTable("RecipeBookMembers", (string)null);
                 });
 
             modelBuilder.Entity("RecipeIngredient", b =>
@@ -802,7 +827,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("RecipeIngredients");
+                    b.ToTable("RecipeIngredients", (string)null);
                 });
 
             modelBuilder.Entity("RecipeTag", b =>
@@ -822,7 +847,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("RecipeTags");
+                    b.ToTable("RecipeTags", (string)null);
                 });
 
             modelBuilder.Entity("ReminderDelivery", b =>
@@ -849,7 +874,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("CalendarEventId", "OccurrenceDate", "UserId")
                         .IsUnique();
 
-                    b.ToTable("ReminderDeliveries");
+                    b.ToTable("ReminderDeliveries", (string)null);
                 });
 
             modelBuilder.Entity("SharedRecipe", b =>
@@ -881,7 +906,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SharedRecipes");
+                    b.ToTable("SharedRecipes", (string)null);
                 });
 
             modelBuilder.Entity("SharedRecipeIngredient", b =>
@@ -914,7 +939,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("SharedRecipeId");
 
-                    b.ToTable("SharedRecipeIngredients");
+                    b.ToTable("SharedRecipeIngredients", (string)null);
                 });
 
             modelBuilder.Entity("SharedRecipeTag", b =>
@@ -934,7 +959,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("SharedRecipeId");
 
-                    b.ToTable("SharedRecipeTags");
+                    b.ToTable("SharedRecipeTags", (string)null);
                 });
 
             modelBuilder.Entity("ShoppingItem", b =>
@@ -964,7 +989,7 @@ namespace HandleListen.Migrations
 
                     b.HasIndex("ShoppingListId");
 
-                    b.ToTable("ShoppingItems");
+                    b.ToTable("ShoppingItems", (string)null);
                 });
 
             modelBuilder.Entity("ShoppingList", b =>
@@ -983,7 +1008,7 @@ namespace HandleListen.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ShoppingLists");
+                    b.ToTable("ShoppingLists", (string)null);
                 });
 
             modelBuilder.Entity("ShoppingListGuest", b =>
@@ -1004,7 +1029,7 @@ namespace HandleListen.Migrations
                     b.HasIndex("ShoppingListId", "UserId")
                         .IsUnique();
 
-                    b.ToTable("ShoppingListGuests");
+                    b.ToTable("ShoppingListGuests", (string)null);
                 });
 
             modelBuilder.Entity("CalendarEvent", b =>

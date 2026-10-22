@@ -21,6 +21,10 @@ export class MealPlanService {
         return this.http.delete<void>(`${this.baseUrl}/${id}`);
     }
 
+    setCurrent(id: number): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/${id}/set-current`, {});
+    }
+
     getGeneratePreview(id: number): Observable<GeneratedListItem[]> {
         return this.http.get<GeneratedListItem[]>(`${this.baseUrl}/${id}/generate-preview`);
     }

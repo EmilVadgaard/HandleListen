@@ -18,6 +18,7 @@ import { UNIT_LABELS } from '../unit-of-measure';
 export interface MealPlanCardDialogResult {
   deleted?: boolean;
   generatedList?: ShoppingList;
+  setCurrent?: boolean;
 }
 
 export interface FullRecipeForPrint {
@@ -53,6 +54,12 @@ export class MealPlanCardDialog {
         this.generatedList.set(list);
         this.close();
       }
+    });
+  }
+
+  setCurrent() {
+    this.mealPlanService.setCurrent(this.plan.id).subscribe(() => {
+      this.dialogRef.close({ setCurrent: true });
     });
   }
 

@@ -28,7 +28,7 @@ export class Login {
   login() {
     this.errorMessage.set(null);
     this.auth.login(this.email, this.password).subscribe({
-      next: () => this.router.navigate(['/handleliste']),
+      next: () => this.router.navigate(['/min-side']),
       error: () => this.errorMessage.set('Forkert email eller adgangskode.')
     });
   }

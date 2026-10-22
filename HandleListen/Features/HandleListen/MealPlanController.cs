@@ -34,7 +34,7 @@ public class MealPlanController : ControllerBase
             .Where(mpr => mpr.MealPlanId == plan.Id)
             .Join(_context.Recipes, mpr => mpr.RecipeId, r => r.Id, (mpr, r) => new RecipeSummaryDto(r.Id, r.Title))
             .ToListAsync();
-        return new MealPlanDto(plan.Id, plan.Name, recipes);
+        return new MealPlanDto(plan.Id, plan.Name, recipes, plan.IsCurrent);
     }
 
     [HttpGet]
@@ -87,6 +87,25 @@ public class MealPlanController : ControllerBase
         var links = _context.MealPlanRecipes.Where(mpr => mpr.MealPlanId == id);
         _context.MealPlanRecipes.RemoveRange(links);
         _context.MealPlans.Remove(plan);
+        await _context.SaveChangesAsync();
+
+        await _notifier.NotifyMealPlansChanged(await GetBookMemberIdsAsync(bookId));
+        return NoContent();
+    }
+
+    [HttpPost("{id}/set-current")]
+    public async Task<IActionResult> SetCurrent(int id)
+    {
+        var bookId = await GetOrCreateMyBookIdAsync();
+        var plan = await _context.MealPlans.FirstOrDefaultAsync(p => p.Id == id && p.RecipeBookId == bookId);
+        if (plan is null) return NotFound();
+
+        var siblings = await _context.MealPlans
+            .Where(p => p.RecipeBookId == bookId && p.IsCurrent && p.Id != id)
+            .ToListAsync();
+        foreach (var sibling in siblings) sibling.IsCurrent = false;
+
+        plan.IsCurrent = true;
         await _context.SaveChangesAsync();
 
         await _notifier.NotifyMealPlansChanged(await GetBookMemberIdsAsync(bookId));

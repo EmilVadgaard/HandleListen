@@ -48,6 +48,36 @@ public class PlanController : ControllerBase
         return await ToDto(ordered).ToListAsync();
     }
 
+    [HttpGet("upcoming-todos")]
+    public async Task<ActionResult<IEnumerable<UpcomingPlanTodoDto>>> GetUpcomingTodos([FromQuery] DateOnly today, [FromQuery] int days = 30)
+    {
+        var windowEnd = today.AddDays(days);
+        var activePlans = await AccessiblePlansQuery()
+            .Where(p => p.IsActive && (p.Type == PlanType.Weekly || p.Type == PlanType.Monthly))
+            .ToListAsync();
+        var planIds = activePlans.Select(p => p.Id).ToList();
+        var plansById = activePlans.ToDictionary(p => p.Id);
+        var todos = await _context.PlanTodos.Where(t => planIds.Contains(t.PlanId)).ToListAsync();
+
+        return todos
+            .Select(t => (Todo: t, Plan: plansById[t.PlanId], Date: ResolveDate(plansById[t.PlanId], t)))
+            .Where(x => x.Date is { } d && d >= today && d <= windowEnd)
+            .Select(x => new UpcomingPlanTodoDto(x.Plan.Id, x.Plan.Name, x.Todo.Id, x.Todo.Title, x.Todo.Done, x.Date!.Value, x.Todo.Time))
+            .OrderBy(x => x.Date).ThenBy(x => x.Time)
+            .ToList();
+    }
+
+    [HttpGet("standard-todos")]
+    public async Task<ActionResult<IEnumerable<StandardPlanTodoDto>>> GetStandardTodos()
+    {
+        var activePlans = await AccessiblePlansQuery().Where(p => p.IsActive && p.Type == PlanType.Standard).ToListAsync();
+        var planIds = activePlans.Select(p => p.Id).ToList();
+        var plansById = activePlans.ToDictionary(p => p.Id);
+        var todos = await _context.PlanTodos.Where(t => planIds.Contains(t.PlanId)).OrderBy(t => t.SortOrder).ToListAsync();
+
+        return todos.Select(t => new StandardPlanTodoDto(t.PlanId, plansById[t.PlanId].Name, t.Id, t.Title, t.Done)).ToList();
+    }
+
     [HttpPost]
     public async Task<ActionResult<PlanDto>> Create(CreatePlanRequest request)
     {
