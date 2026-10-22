@@ -1,0 +1,133 @@
+<div class="budget-toolbar">
+    <h1 class="page-title">Budget</h1>
+    <div class="toolbar-spacer"></div>
+    <button mat-icon-button (click)="openShareDialog()" aria-label="Del budget">
+        <mat-icon>people</mat-icon>
+    </button>
+</div>
+
+<div class="surplus-row">
+    <mat-card class="surplus-card" [class.negative]="expectedSurplus() < 0">
+        <span class="surplus-label">Forventet overskud</span>
+        <span class="surplus-value">{{ expectedSurplus() }} kr</span>
+    </mat-card>
+    <mat-card class="surplus-card" [class.negative]="actualSurplus() < 0">
+        <span class="surplus-label">Faktisk overskud</span>
+        <span class="surplus-value">{{ actualSurplus() }} kr</span>
+    </mat-card>
+</div>
+
+<div class="fixed-columns">
+    <div class="fixed-column">
+        <h3 class="section-heading">Faste indtægter</h3>
+        @for (entry of incomeFixed(); track entry.id) {
+            @if (editingFixedId === entry.id) {
+                <mat-card class="entry-row editing">
+                    <input class="edit-input name-input" [(ngModel)]="editFixedName" placeholder="Navn" />
+                    <input class="edit-input amount-input" type="number" [(ngModel)]="editFixedAmount" />
+                    <button mat-icon-button (click)="saveEditFixed(entry)" aria-label="Gem"><mat-icon>check</mat-icon></button>
+                    <button mat-icon-button (click)="cancelEditFixed()" aria-label="Annullér"><mat-icon>close</mat-icon></button>
+                </mat-card>
+            } @else {
+                <mat-card class="entry-row">
+                    <span class="entry-name">{{ entry.name }}</span>
+                    <span class="entry-amount">{{ entry.amount }} kr</span>
+                    <button mat-icon-button (click)="startEditFixed(entry)" aria-label="Redigér"><mat-icon>edit</mat-icon></button>
+                    <button mat-icon-button (click)="deleteFixedEntry(entry)" aria-label="Slet"><mat-icon>delete_outline</mat-icon></button>
+                </mat-card>
+            }
+        }
+        @if (addingFixedType === 'Income') {
+            <mat-card class="entry-row editing">
+                <input class="edit-input name-input" [(ngModel)]="newFixedName" placeholder="Navn" (keyup.enter)="confirmAddFixed()" />
+                <input class="edit-input amount-input" type="number" [(ngModel)]="newFixedAmount" (keyup.enter)="confirmAddFixed()" />
+                <button mat-icon-button (click)="confirmAddFixed()" aria-label="Tilføj"><mat-icon>check</mat-icon></button>
+                <button mat-icon-button (click)="cancelAddFixed()" aria-label="Annullér"><mat-icon>close</mat-icon></button>
+            </mat-card>
+        } @else {
+            <button mat-button class="add-button" (click)="startAddFixed('Income')">
+                <mat-icon>add</mat-icon>
+                Tilføj indtægt
+            </button>
+        }
+    </div>
+
+    <div class="fixed-column">
+        <h3 class="section-heading">Faste udgifter</h3>
+        @for (entry of expenseFixed(); track entry.id) {
+            @if (editingFixedId === entry.id) {
+                <mat-card class="entry-row editing">
+                    <input class="edit-input name-input" [(ngModel)]="editFixedName" placeholder="Navn" />
+                    <input class="edit-input amount-input" type="number" [(ngModel)]="editFixedAmount" />
+                    <button mat-icon-button (click)="saveEditFixed(entry)" aria-label="Gem"><mat-icon>check</mat-icon></button>
+                    <button mat-icon-button (click)="cancelEditFixed()" aria-label="Annullér"><mat-icon>close</mat-icon></button>
+                </mat-card>
+            } @else {
+                <mat-card class="entry-row">
+                    <span class="entry-name">{{ entry.name }}</span>
+                    <span class="entry-amount">{{ entry.amount }} kr</span>
+                    <button mat-icon-button (click)="startEditFixed(entry)" aria-label="Redigér"><mat-icon>edit</mat-icon></button>
+                    <button mat-icon-button (click)="deleteFixedEntry(entry)" aria-label="Slet"><mat-icon>delete_outline</mat-icon></button>
+                </mat-card>
+            }
+        }
+        @if (addingFixedType === 'Expense') {
+            <mat-card class="entry-row editing">
+                <input class="edit-input name-input" [(ngModel)]="newFixedName" placeholder="Navn" (keyup.enter)="confirmAddFixed()" />
+                <input class="edit-input amount-input" type="number" [(ngModel)]="newFixedAmount" (keyup.enter)="confirmAddFixed()" />
+                <button mat-icon-button (click)="confirmAddFixed()" aria-label="Tilføj"><mat-icon>check</mat-icon></button>
+                <button mat-icon-button (click)="cancelAddFixed()" aria-label="Annullér"><mat-icon>close</mat-icon></button>
+            </mat-card>
+        } @else {
+            <button mat-button class="add-button" (click)="startAddFixed('Expense')">
+                <mat-icon>add</mat-icon>
+                Tilføj udgift
+            </button>
+        }
+    </div>
+</div>
+
+<h3 class="section-heading">Løse/budgetterede kategorier</h3>
+<div class="variable-list">
+    @for (category of variableCategories(); track category.id) {
+        <mat-card class="variable-row">
+            @if (editingVariableNameId === category.id) {
+                <input class="edit-input name-input" [(ngModel)]="editVariableName" placeholder="Navn" (keyup.enter)="saveEditVariableName(category)" />
+                <button mat-icon-button (click)="saveEditVariableName(category)" aria-label="Gem"><mat-icon>check</mat-icon></button>
+                <button mat-icon-button (click)="cancelEditVariableName()" aria-label="Annullér"><mat-icon>close</mat-icon></button>
+            } @else {
+                <span class="entry-name">{{ category.name }}</span>
+                <button mat-icon-button (click)="startEditVariableName(category)" aria-label="Redigér navn"><mat-icon>edit</mat-icon></button>
+                <mat-form-field appearance="outline" class="amount-field" subscriptSizing="dynamic">
+                    <mat-label>Forventet</mat-label>
+                    <input matInput type="number" [value]="category.expectedAmount" (blur)="updateExpectedAmount(category, $any($event.target).value)" />
+                </mat-form-field>
+                <mat-form-field appearance="outline" class="amount-field" subscriptSizing="dynamic">
+                    <mat-label>Faktisk</mat-label>
+                    <input matInput type="number" [value]="category.actualAmount" (blur)="updateActualAmount(category, $any($event.target).value)" />
+                </mat-form-field>
+                <button mat-icon-button (click)="deleteVariableCategory(category)" aria-label="Slet"><mat-icon>delete_outline</mat-icon></button>
+            }
+        </mat-card>
+    }
+
+    @if (isAddingVariable) {
+        <mat-card class="variable-row editing">
+            <input class="edit-input name-input" [(ngModel)]="newVariableName" placeholder="Navn" (keyup.enter)="confirmAddVariable()" />
+            <mat-form-field appearance="outline" class="type-field" subscriptSizing="dynamic">
+                <mat-label>Type</mat-label>
+                <mat-select [(ngModel)]="newVariableType">
+                    <mat-option value="Expense">Udgift</mat-option>
+                    <mat-option value="Income">Indtægt</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-icon-button (click)="confirmAddVariable()" aria-label="Tilføj"><mat-icon>check</mat-icon></button>
+            <button mat-icon-button (click)="cancelAddVariable()" aria-label="Annullér"><mat-icon>close</mat-icon></button>
+        </mat-card>
+    } @else {
+        <button mat-button class="add-button" (click)="startAddVariable()">
+            <mat-icon>add</mat-icon>
+            Tilføj kategori
+        </button>
+    }
+</div>

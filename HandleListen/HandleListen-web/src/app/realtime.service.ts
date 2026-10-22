@@ -108,4 +108,8 @@ export class RealtimeService {
     onPlansChanged(callback: () => void) {
         this.connect().then(() => this.connection?.on('PlansChanged', callback));
     }
+
+    onBudgetChanged(callback: () => void) {
+        this.connect().then(() => this.connection?.on('BudgetChanged', callback));
+    }
 }

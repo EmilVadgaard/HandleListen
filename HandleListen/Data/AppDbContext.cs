@@ -40,6 +40,11 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<PlanGuest> PlanGuests => Set<PlanGuest>();
     public DbSet<PlanTodo> PlanTodos => Set<PlanTodo>();
     public DbSet<PersonalNote> PersonalNotes => Set<PersonalNote>();
+    public DbSet<Budget> Budgets => Set<Budget>();
+    public DbSet<BudgetMember> BudgetMembers => Set<BudgetMember>();
+    public DbSet<BudgetInvite> BudgetInvites => Set<BudgetInvite>();
+    public DbSet<BudgetFixedEntry> BudgetFixedEntries => Set<BudgetFixedEntry>();
+    public DbSet<BudgetVariableCategory> BudgetVariableCategories => Set<BudgetVariableCategory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -85,6 +90,28 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
             .HasOne<Calendar>()
             .WithMany()
             .HasForeignKey(e => e.CalendarId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<BudgetMember>()
+            .HasOne<Budget>()
+            .WithMany()
+            .HasForeignKey(m => m.BudgetId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<BudgetMember>()
+            .HasIndex(m => new { m.BudgetId, m.UserId })
+            .IsUnique();
+
+        builder.Entity<BudgetFixedEntry>()
+            .HasOne<Budget>()
+            .WithMany()
+            .HasForeignKey(e => e.BudgetId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<BudgetVariableCategory>()
+            .HasOne<Budget>()
+            .WithMany()
+            .HasForeignKey(c => c.BudgetId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<KnownItemAlias>()

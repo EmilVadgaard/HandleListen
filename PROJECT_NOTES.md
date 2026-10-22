@@ -58,19 +58,16 @@ Bliver den NYE standard-forside når man er logget ind (erstatter nuværende `re
 
 **Hvorfor nr. 3 i rækkefølgen:** binder madplan + kalender + planer + noter sammen — giver mest værdi når Planer allerede findes.
 
-### 4. Budget-planlægger
-**VIGTIG afklaring:** dette er IKKE måneds-baseret eller "gentagende" — det er et tidsløst regneark der afspejler, hvordan en vilkårlig måned ser ud. Ingen måneds-rollover, intet gentagelses-system nødvendigt (modsat kalenderens Weekly/Monthly/Yearly).
+### 4. Budget-planlægger (BYGGET og deployet 2026-10-22)
+Tidsløst regneark der afspejler, hvordan en vilkårlig måned ser ud — IKKE måneds-baseret eller "gentagende", ingen rollover, intet gentagelses-system (modsat kalenderens Weekly/Monthly/Yearly).
 
-**Indhold:**
-- **Faste indtægter/udgifter:** løn (begge ægtefæller), boligstøtte/tilskud, husleje, faste regninger. Disse ændrer sig kun når noget i virkeligheden ændrer sig (flytning, lønforhøjelse) — man redigerer dem direkte, ingen automatik.
-- **Løse/budgetterede kategorier:** mad, benzin, osv. — beløb der svinger. Tanken er et "forventet" beløb familien kan se og forholde sig til.
-  - **ÅBENT, UAFKLARET PUNKT:** er det forventede/faktiske beløb for disse kategorier ÉT redigerbart tal man retter til løbende (f.eks. "mad: forventet 3000, faktisk 3400" — ét felt man opdaterer), eller en LØBENDE LISTE af poster der lægges sammen? Emil bekræftede aldrig eksplicit dette efter at have reframet budgettet som tidsløst — **spørg ham direkte, før dette bygges.** Det ændrer markant på omfanget (ét redigerbart felt vs. en transaktionsliste).
-- **Beregnet overskud:** total indtægt − total udgift = overskud, altid levende/aktuelt baseret på hvad der står.
-- **Delt med familien** — samme slags medlemskabs-model som Kalender/Opskriftsbog giver god mening (en "BudgetBook" med medlemmer).
+**Indhold, som bygget:**
+- **Faste indtægter/udgifter** (`BudgetFixedEntry`): navn + type (Income/Expense) + ét beløb. Redigeres direkte, ingen automatik.
+- **Løse/budgetterede kategorier** (`BudgetVariableCategory`): navn + type + to redigerbare felter, "Forventet" og "Faktisk" — **afklaret med Emil:** ÉT tal man selv retter til løbende, IKKE en transaktionsliste.
+- **Beregnet overskud:** vises som to levende tal, "Forventet overskud" (fast beløb + forventet-feltet) og "Faktisk overskud" (fast beløb + faktisk-feltet), begge beregnet client-side.
+- **Delt med familien** via samme medlemskabs-/invitations-model som Kalender (`Budget`/`BudgetMember`/`BudgetInvite`/`BudgetAccessService`) — invitér/accepter smelter sammen, forlad giver en fuld kopi.
 
-**EKSPLICIT UDSKUDT (del 2, ikke del af første version):** "sætte penge til side" + visualisering af vækst over tid (en graf over akkumuleret opsparing). Dette ER tidsbaseret (modsat selve budget-arket), og bygges som en senere tilføjelse ovenpå budget-arket — blokerer IKKE at komme i gang med selve oversigten og overskuds-beregningen.
-
-**Hvorfor nr. 4 (sidst) i rækkefølgen:** helt uafhængig af de tre andre, kan komme ind når som helst — men har størst behov for at det uafklarede punkt ovenfor besvares først.
+**EKSPLICIT UDSKUDT (del 2, ikke bygget endnu):** "sætte penge til side" + visualisering af vækst over tid (en graf over akkumuleret opsparing).
 
 ---
 

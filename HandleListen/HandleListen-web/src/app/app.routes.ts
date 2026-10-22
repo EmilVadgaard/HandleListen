@@ -12,6 +12,7 @@ import { Kalender } from './kalender/kalender';
 import { Madplaner } from './madplaner/madplaner';
 import { PlanerListe } from './planer-liste/planer-liste';
 import { PlanDetail } from './plan-detail/plan-detail';
+import { Budget } from './budget/budget';
 import { Forum } from './forum/forum';
 import { Admin } from './admin/admin';
 import { PrivacyPolicy } from './privacy-policy/privacy-policy';
@@ -26,6 +27,7 @@ export const routes: Routes = [
     { path: 'madplaner', component: Madplaner, canActivate: [authGuard] },
     { path: 'planer', component: PlanerListe, canActivate: [authGuard] },
     { path: 'planer/:id', component: PlanDetail, canActivate: [authGuard] },
+    { path: 'budget', component: Budget, canActivate: [authGuard] },
     { path: 'forum', component: Forum, canActivate: [authGuard] },
     { path: 'admin', component: Admin, canActivate: [authGuard, ownerGuard] },
     { path: 'indstillinger', component: Settings, canActivate: [authGuard] },

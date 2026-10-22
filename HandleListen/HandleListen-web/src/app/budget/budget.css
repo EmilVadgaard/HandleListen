@@ -1,0 +1,131 @@
+.budget-toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+.surplus-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.surplus-card {
+  flex: 1;
+  min-width: 12rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  background: var(--mat-sys-tertiary-container, #e8f5e9);
+}
+
+.surplus-card.negative {
+  background: var(--mat-sys-error-container, #fde8e8);
+}
+
+.surplus-label {
+  font-size: 0.8rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+}
+
+.surplus-value {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.section-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.fixed-columns {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.fixed-column {
+  flex: 1;
+  min-width: 16rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.entry-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.entry-row.editing {
+  flex-wrap: wrap;
+}
+
+.entry-name {
+  flex: 1;
+}
+
+.entry-amount {
+  color: var(--mat-sys-on-surface-variant, #666);
+}
+
+.edit-input {
+  border: 1px solid var(--mat-sys-outline-variant, #ccc);
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+  font: inherit;
+  background: transparent;
+  color: inherit;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 6rem;
+}
+
+.amount-input {
+  width: 6rem;
+}
+
+.add-button {
+  width: 100%;
+}
+
+.variable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 40rem;
+}
+
+.variable-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  flex-wrap: wrap;
+}
+
+.amount-field {
+  width: 7rem;
+}
+
+.type-field {
+  width: 8rem;
+}

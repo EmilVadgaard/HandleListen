@@ -48,6 +48,7 @@ builder.Services.AddSignalR();
 builder.Services.AddSingleton<AppNotifier>();
 builder.Services.AddScoped<CalendarAccessService>();
 builder.Services.AddScoped<RecipeBookAccessService>();
+builder.Services.AddScoped<BudgetAccessService>();
 builder.Services.AddScoped<KnownItemLookupService>();
 builder.Services.AddScoped<BlockService>();
 builder.Services.AddScoped<FcmPushSender>();

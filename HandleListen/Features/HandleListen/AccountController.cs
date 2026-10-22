@@ -146,6 +146,21 @@ public class AccountController : ControllerBase
         }
         _context.RecipeBookInvites.RemoveRange(_context.RecipeBookInvites.Where(i => i.FromUserId == userId || i.ToUserId == userId));
 
+        var myBudgetMemberships = await _context.BudgetMembers.Where(m => m.UserId == userId).ToListAsync();
+        foreach (var membership in myBudgetMemberships)
+        {
+            _context.BudgetMembers.Remove(membership);
+            var remaining = await _context.BudgetMembers.CountAsync(m => m.BudgetId == membership.BudgetId && m.UserId != userId);
+            if (remaining == 0)
+            {
+                _context.BudgetFixedEntries.RemoveRange(_context.BudgetFixedEntries.Where(e => e.BudgetId == membership.BudgetId));
+                _context.BudgetVariableCategories.RemoveRange(_context.BudgetVariableCategories.Where(c => c.BudgetId == membership.BudgetId));
+                var budget = await _context.Budgets.FindAsync(membership.BudgetId);
+                if (budget is not null) _context.Budgets.Remove(budget);
+            }
+        }
+        _context.BudgetInvites.RemoveRange(_context.BudgetInvites.Where(i => i.FromUserId == userId || i.ToUserId == userId));
+
         _context.PushSubscriptions.RemoveRange(_context.PushSubscriptions.Where(s => s.UserId == userId));
         _context.DigestPreferences.RemoveRange(_context.DigestPreferences.Where(p => p.UserId == userId));
         _context.DigestDeliveries.RemoveRange(_context.DigestDeliveries.Where(d => d.UserId == userId));

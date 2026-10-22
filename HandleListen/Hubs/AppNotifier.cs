@@ -40,4 +40,8 @@ public class AppNotifier
     public Task NotifyPlansChanged(IEnumerable<string> userIds) =>
         Task.WhenAll(userIds.Distinct().Select(userId =>
             _hub.Clients.Group(GroupNames.ForUser(userId)).SendAsync("PlansChanged")));
+
+    public Task NotifyBudgetChanged(IEnumerable<string> userIds) =>
+        Task.WhenAll(userIds.Distinct().Select(userId =>
+            _hub.Clients.Group(GroupNames.ForUser(userId)).SendAsync("BudgetChanged")));
 }
