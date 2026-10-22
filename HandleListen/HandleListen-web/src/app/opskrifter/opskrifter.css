@@ -21,6 +21,13 @@
   align-items: flex-start;
 }
 
+.main-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .tag-sidebar {
   flex: 0 0 11rem;
   display: flex;
@@ -60,7 +67,6 @@
 }
 
 .recipe-grid {
-  flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1rem;
@@ -99,5 +105,49 @@
   font-weight: 500;
   text-align: center;
   word-break: break-word;
+}
+
+/* On a phone-width screen the tag sidebar (a full-height column next to the recipe grid)
+   eats half the screen and makes browsing recipes hard. Below this, it moves to sit between
+   the search bar and the grid instead, as a compact wrapping row - desktop is untouched above
+   this breakpoint. `main-content` is unwrapped via display:contents so toolbar/recipe-grid
+   become direct flex items of page-layout alongside tag-sidebar, which lets `order` place the
+   sidebar between them without changing the HTML structure that desktop relies on. */
+@media (max-width: 600px) {
+  .page-layout {
+    flex-direction: column;
+  }
+
+  .main-content {
+    display: contents;
+  }
+
+  .toolbar {
+    order: 1;
+  }
+
+  .tag-sidebar {
+    order: 2;
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .sidebar-heading {
+    width: 100%;
+    margin: 0 0 0.15rem;
+  }
+
+  .tag-filter-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .recipe-grid {
+    order: 3;
+  }
 }
 

@@ -45,7 +45,7 @@ public class ShoppingListController : ControllerBase
         await _context.SaveChangesAsync();
 
         var dto = await ToDto(_context.ShoppingLists.Where(x => x.Id == list.Id)).FirstAsync();
-        return CreatedAtAction(nameof(GetById), new { id = list.Id }, dto);
+        return StatusCode(201, dto);
     }
 
     [HttpGet]
@@ -53,14 +53,6 @@ public class ShoppingListController : ControllerBase
     {
         return await ToDto(AccessibleListsQuery().OrderBy(x => x.Name))
             .ToListAsync();
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ShoppingListDto>> GetById(int id)
-    {
-        var item = await ToDto(AccessibleListsQuery().Where(x => x.Id == id)).FirstOrDefaultAsync();
-        if (item is null) return NotFound();
-        return item;
     }
 
     [HttpPut("{id}")]

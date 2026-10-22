@@ -60,6 +60,20 @@ public class ShoppingListHub : Hub
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupNames.ForRecipe(recipeId));
     }
+
+    public async Task JoinPlan(int planId)
+    {
+        var accessible = await _context.Plans.AnyAsync(p => p.Id == planId &&
+            (p.UserId == UserId || _context.PlanGuests.Any(g => g.PlanId == planId && g.UserId == UserId)));
+        if (!accessible) return;
+
+        await Groups.AddToGroupAsync(Context.ConnectionId, GroupNames.ForPlan(planId));
+    }
+
+    public async Task LeavePlan(int planId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, GroupNames.ForPlan(planId));
+    }
 }
 
 public static class GroupNames
@@ -68,4 +82,5 @@ public static class GroupNames
     public static string ForList(int listId) => $"list-{listId}";
     public static string ForCalendar(int calendarId) => $"calendar-{calendarId}";
     public static string ForRecipe(int recipeId) => $"recipe-{recipeId}";
+    public static string ForPlan(int planId) => $"plan-{planId}";
 }

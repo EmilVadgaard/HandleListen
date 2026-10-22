@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatListModule } from '@angular/material/list';
 import { ShoppingService } from '../shopping.service';
 import { ShoppingListService } from '../shopping-list.service';
@@ -15,10 +16,11 @@ import { ShoppingList } from '../shopping-list';
 import { ListSettingsDialog, ListSettingsResult } from '../list-settings-dialog/list-settings-dialog';
 import { ItemNameField } from '../item-name-field/item-name-field';
 import { MergeListsDialog } from '../merge-lists-dialog/merge-lists-dialog';
+import { CATEGORIES } from '../category';
 
 @Component({
   selector: 'app-handleliste',
-  imports: [FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatListModule, ItemNameField],
+  imports: [FormsModule, MatButtonModule, MatIconModule, MatCardModule, MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatListModule, ItemNameField],
   templateUrl: './handleliste.html',
   styleUrl: './handleliste.css',
 })
@@ -49,8 +51,19 @@ export class Handleliste implements OnInit {
   });
 
   newName = '';
-  newCategory = '';
+  newCategory = signal('');
+  filteredNewCategories = computed(() => this.filterCategories(this.newCategory()));
   newQuantity = 1;
+
+  editingItemId = signal<number | null>(null);
+  editName = '';
+  editCategory = signal('');
+  filteredEditCategories = computed(() => this.filterCategories(this.editCategory()));
+
+  private filterCategories(query: string): string[] {
+    const trimmed = query.trim().toLowerCase();
+    return CATEGORIES.filter(c => !trimmed || c.toLowerCase().includes(trimmed));
+  }
 
   ngOnInit() {
     this.refreshLists();
@@ -164,23 +177,22 @@ export class Handleliste implements OnInit {
   }
 
   onCategorySuggested(category: string) {
-    this.newCategory = category;
+    this.newCategory.set(category);
     this.cdr.markForCheck();
   }
 
   add() {
     const listId = this.selectedListId();
     if (!listId || !this.newName.trim()) return;
-    this.newCategory = this.newCategory.toLowerCase().trim() || 'Diverse';
-    this.newCategory = this.newCategory.charAt(0).toUpperCase() + this.newCategory.slice(1);
-    this.shoppingService.create(this.newName, this.newCategory, this.newQuantity, listId).subscribe(created => {
+    const category = this.newCategory().trim() || 'Diverse';
+    this.shoppingService.create(this.newName, category, this.newQuantity, listId).subscribe(created => {
       // The backend's realtime "ItemsChanged" broadcast also reaches this same client (it's
       // sent to everyone in the list's group, including the creator) and may already have
       // refreshed the list via onItemsChanged by the time this callback runs - guard against
       // appending the same item twice.
       this.items.update(list => list.some(i => i.id === created.id) ? list : [...list, created]);
       this.newName = '';
-      this.newCategory = '';
+      this.newCategory.set('');
       this.newQuantity = 1;
       this.nameField()?.reset();
     });
@@ -200,6 +212,32 @@ export class Handleliste implements OnInit {
         this.items.update(list => list.filter(i => i.id !== id));
       },
       error: err => console.error('Failed to delete item', err)
+    });
+  }
+
+  startEditItem(item: ShoppingItem) {
+    this.editingItemId.set(item.id);
+    this.editName = item.name;
+    this.editCategory.set(item.category);
+  }
+
+  onEditCategorySuggested(category: string) {
+    this.editCategory.set(category);
+    this.cdr.markForCheck();
+  }
+
+  cancelEditItem() {
+    this.editingItemId.set(null);
+  }
+
+  saveEditItem(item: ShoppingItem) {
+    const name = this.editName.trim();
+    if (!name) return;
+    const updated = { ...item, name, category: this.editCategory().trim() || 'Diverse' };
+    this.shoppingService.update(updated).subscribe(() => {
+      this.items.update(list => list.map(i => i.id === item.id ? updated : i));
+      this.editingItemId.set(null);
+      this.cdr.markForCheck();
     });
   }
 }

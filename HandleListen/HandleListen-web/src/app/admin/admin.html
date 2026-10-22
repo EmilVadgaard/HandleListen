@@ -1,0 +1,57 @@
+<h1 class="page-title">Administrator</h1>
+
+<mat-tab-group animationDuration="0ms">
+  <mat-tab label="Kø">
+    <p class="hint-text">Ingredienser fra importerede opskrifter, som ikke matchede noget i kendte varer.</p>
+
+    @if (requests().length === 0) {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">inbox</mat-icon>
+        <p>Køen er tom.</p>
+      </div>
+    } @else {
+      <mat-list>
+        @for (request of requests(); track request.id) {
+          <mat-list-item class="request-row">
+            <span matListItemTitle>{{ request.name }}</span>
+            <span matListItemLine class="meta-text">
+              {{ request.sourceDescription }} · set {{ request.seenCount }}x · af {{ request.requestedByEmail }}
+            </span>
+            <div matListItemMeta class="request-actions">
+              <button mat-stroked-button (click)="resolveRequest(request, true)">
+                Tilføj til kendte varer
+              </button>
+              <button mat-icon-button (click)="resolveRequest(request, false)" aria-label="Afvis">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+  </mat-tab>
+
+  <mat-tab label="Kendte varer">
+    <div class="toolbar">
+      <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+        <mat-label>Søg kendte varer</mat-label>
+        <input matInput [(ngModel)]="itemSearch" placeholder="navn, kategori eller alias" />
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+      <button mat-icon-button (click)="addKnownItem()" aria-label="Tilføj ny kendt vare">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <mat-list>
+      @for (item of filteredKnownItems(); track item.id) {
+        <mat-list-item class="item-row" (click)="editKnownItem(item)">
+          <span matListItemTitle>{{ item.canonicalName }}</span>
+          <span matListItemLine class="meta-text">
+            {{ item.category }} · {{ item.aliases.length }} navn{{ item.aliases.length === 1 ? '' : 'e' }}
+          </span>
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-tab>
+</mat-tab-group>

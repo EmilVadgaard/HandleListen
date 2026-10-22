@@ -21,22 +21,29 @@
     @if (ingredients().length === 0) {
       <p class="hint-text">Ingen ingredienser endnu.</p>
     } @else {
-      <mat-list>
-        @for (ingredient of ingredients(); track ingredient.id) {
-          <mat-list-item>
-            <span matListItemTitle>
-              {{ ingredient.quantity }}x {{ ingredient.name }}
-              @if (ingredient.amount) {
-                <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
-              }
-            </span>
-          </mat-list-item>
-        }
-      </mat-list>
+      @for (group of groupedIngredients(); track group.category) {
+        <h4 class="category-heading">{{ group.category }}</h4>
+        <mat-list>
+          @for (ingredient of group.items; track ingredient.id) {
+            <mat-list-item>
+              <span matListItemTitle>
+                {{ ingredient.quantity }}x {{ ingredient.name }}
+                @if (ingredient.amount) {
+                  <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
+                }
+              </span>
+            </mat-list-item>
+          }
+        </mat-list>
+      }
     }
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
+    <button mat-button [disabled]="sharing()" (click)="toggleShare()">
+      <mat-icon>{{ sharedRecipeId() === null ? 'share' : 'remove_circle_outline' }}</mat-icon>
+      {{ sharedRecipeId() === null ? 'Del til forum' : 'Fjern fra forum' }}
+    </button>
     <button mat-button (click)="close()">Luk</button>
     <button mat-flat-button color="primary" (click)="startEditing()">
       <mat-icon>edit</mat-icon>
@@ -75,20 +82,30 @@
         }
       </mat-chip-set>
     }
-    <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
-      <mat-label>Tilføj tag</mat-label>
-      <input
-        matInput
-        [(ngModel)]="tagInput"
-        [matAutocomplete]="tagAuto"
-        placeholder="f.eks. vegetar"
-        (keyup.enter)="addTag(tagInput)" />
-      <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="onTagOptionSelected($event)">
-        @for (suggestion of filteredTagSuggestions(); track suggestion) {
-          <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-form-field>
+    <div class="tag-input-row">
+      <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+        <mat-label>Tilføj tag</mat-label>
+        <input
+          matInput
+          [(ngModel)]="tagInput"
+          [matAutocomplete]="tagAuto"
+          placeholder="f.eks. vegetar"
+          (keyup.enter)="addTag(tagInput)" />
+        <mat-autocomplete #tagAuto="matAutocomplete" (optionSelected)="onTagOptionSelected($event)">
+          @for (suggestion of filteredTagSuggestions(); track suggestion) {
+            <mat-option [value]="suggestion">{{ suggestion }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <button
+        mat-icon-button
+        type="button"
+        [disabled]="!tagInput.trim()"
+        (click)="addTag(tagInput)"
+        aria-label="Tilføj tag">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
 
     <mat-divider class="section-divider"></mat-divider>
     <h3 class="section-heading">Ingredienser</h3>
@@ -103,11 +120,17 @@
         (unitSuggested)="onUnitSuggested($event)" />
       <mat-form-field appearance="outline" class="category-field" subscriptSizing="dynamic">
         <mat-label>Kategori</mat-label>
-        <mat-select [(ngModel)]="newIngredientCategory">
-          @for (c of categories; track c) {
+        <input
+          matInput
+          [ngModel]="newIngredientCategory()"
+          (ngModelChange)="newIngredientCategory.set($event)"
+          [matAutocomplete]="ingredientCategoryAuto"
+          placeholder="Vælg eller skriv en ny" />
+        <mat-autocomplete #ingredientCategoryAuto="matAutocomplete">
+          @for (c of filteredIngredientCategories(); track c) {
             <mat-option [value]="c">{{ c }}</mat-option>
           }
-        </mat-select>
+        </mat-autocomplete>
       </mat-form-field>
       <mat-form-field appearance="outline" class="quantity-field" subscriptSizing="dynamic">
         <mat-label>Antal</mat-label>
@@ -133,30 +156,71 @@
     <p class="hint-text amount-hint">Mængde er valgfri og bruges kun til senere at lægge ingredienser sammen på tværs af opskrifter i en madplan.</p>
 
     @if (ingredients().length > 0) {
-      <mat-list>
-        @for (ingredient of ingredients(); track ingredient.id) {
-          <mat-list-item class="item-row">
-            <span matListItemTitle>
-              {{ ingredient.name }}
-              @if (ingredient.amount) {
-                <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
-              }
-            </span>
-            <div matListItemMeta class="item-actions">
-              <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity - 1)" [disabled]="ingredient.quantity <= 1" aria-label="Færre">
-                <mat-icon>remove</mat-icon>
-              </button>
-              <span class="quantity-value">{{ ingredient.quantity }}</span>
-              <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity + 1)" aria-label="Flere">
-                <mat-icon>add</mat-icon>
-              </button>
-              <button mat-icon-button (click)="removeIngredient(ingredient.id)" aria-label="Fjern ingrediens">
-                <mat-icon>delete_outline</mat-icon>
-              </button>
-            </div>
-          </mat-list-item>
-        }
-      </mat-list>
+      @for (group of groupedIngredients(); track group.category) {
+        <h4 class="category-heading">{{ group.category }}</h4>
+        <mat-list>
+          @for (ingredient of group.items; track ingredient.id) {
+            @if (editingIngredientId() === ingredient.id) {
+              <mat-list-item class="item-row item-row-editing" lines="2">
+                <div matListItemTitle class="edit-row">
+                  <app-item-name-field
+                    class="edit-name-field"
+                    label="Ingrediens"
+                    [(name)]="editIngredientName"
+                    (categorySuggested)="onEditIngredientCategorySuggested($event)"
+                    (enterPressed)="saveEditIngredient(ingredient)" />
+                  <mat-form-field appearance="outline" class="edit-category-field" subscriptSizing="dynamic">
+                    <mat-label>Kategori</mat-label>
+                    <input
+                      matInput
+                      [ngModel]="editIngredientCategory()"
+                      (ngModelChange)="editIngredientCategory.set($event)"
+                      [matAutocomplete]="editIngredientCategoryAuto"
+                      (keyup.enter)="saveEditIngredient(ingredient)" />
+                    <mat-autocomplete #editIngredientCategoryAuto="matAutocomplete">
+                      @for (c of filteredEditIngredientCategories(); track c) {
+                        <mat-option [value]="c">{{ c }}</mat-option>
+                      }
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+                <div matListItemMeta class="item-actions">
+                  <button mat-icon-button (click)="saveEditIngredient(ingredient)" aria-label="Gem">
+                    <mat-icon>check</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="cancelEditIngredient()" aria-label="Annullér">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+            } @else {
+              <mat-list-item class="item-row">
+                <span matListItemTitle>
+                  {{ ingredient.name }}
+                  @if (ingredient.amount) {
+                    <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
+                  }
+                </span>
+                <div matListItemMeta class="item-actions">
+                  <button mat-icon-button (click)="startEditIngredient(ingredient)" aria-label="Redigér ingrediens">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity - 1)" [disabled]="ingredient.quantity <= 1" aria-label="Færre">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span class="quantity-value">{{ ingredient.quantity }}</span>
+                  <button mat-icon-button (click)="ingredientQuantity(ingredient, ingredient.quantity + 1)" aria-label="Flere">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="removeIngredient(ingredient.id)" aria-label="Fjern ingrediens">
+                    <mat-icon>delete_outline</mat-icon>
+                  </button>
+                </div>
+              </mat-list-item>
+            }
+          }
+        </mat-list>
+      }
     }
 
     <mat-divider class="section-divider"></mat-divider>

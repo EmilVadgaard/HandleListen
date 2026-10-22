@@ -23,3 +23,38 @@ a[mat-button] {
     display: none;
   }
 }
+
+/* mat-menu renders its panel in a CDK overlay outside this component's DOM subtree, so these
+   rules need ::ng-deep to reach it - plain scoped styles here would never apply. */
+::ng-deep .notification-menu {
+  min-width: 20rem;
+  max-width: 24rem;
+}
+
+::ng-deep .notification-empty {
+  padding: 0.75rem 1rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.875rem;
+}
+
+::ng-deep .notification-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+::ng-deep .notification-row:not(:last-child) {
+  border-bottom: 1px solid var(--mat-sys-outline-variant, #e0e0e0);
+}
+
+::ng-deep .notification-text {
+  font-size: 0.875rem;
+  line-height: 1.3;
+}
+
+::ng-deep .notification-actions {
+  display: flex;
+  flex-shrink: 0;
+}

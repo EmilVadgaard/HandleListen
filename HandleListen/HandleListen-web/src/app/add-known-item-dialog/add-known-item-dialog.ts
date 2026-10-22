@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -35,7 +35,11 @@ export class AddKnownItemDialog {
   units = ALL_UNITS;
   unitLabels = UNIT_LABELS;
   mode = signal<'new' | 'alias'>('new');
-  category = '';
+  category = signal('');
+  filteredCategories = computed(() => {
+    const query = this.category().trim().toLowerCase();
+    return this.categories.filter(c => !query || c.toLowerCase().includes(query));
+  });
   defaultUnit: UnitOfMeasure | null = null;
   error = signal<string | null>(null);
   saving = signal(false);
@@ -69,12 +73,13 @@ export class AddKnownItemDialog {
   save() {
     this.error.set(null);
     if (this.mode() === 'new') {
-      if (!this.category) {
-        this.error.set('Vælg en kategori.');
+      const category = this.category().trim();
+      if (!category) {
+        this.error.set('Vælg eller skriv en kategori.');
         return;
       }
       this.saving.set(true);
-      this.knownItemService.create(this.data.name, this.category, this.defaultUnit).subscribe({
+      this.knownItemService.create(this.data.name, category, this.defaultUnit).subscribe({
         next: item => {
           this.saving.set(false);
           this.dialogRef.close({ category: item.category, defaultUnit: item.defaultUnit });

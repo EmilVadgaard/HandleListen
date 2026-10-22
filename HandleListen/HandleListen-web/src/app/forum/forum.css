@@ -1,0 +1,79 @@
+.forum-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-field {
+  max-width: 24rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-heading {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.875rem;
+}
+
+.top-searches-row {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.top-search-card {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-variant, #eee);
+  color: var(--mat-sys-on-surface-variant, #333);
+  font: inherit;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.top-search-card:hover {
+  background: var(--mat-sys-primary-container, #d6e3ff);
+  color: var(--mat-sys-on-primary-container, #001b3f);
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  align-content: start;
+}
+
+.recipe-card {
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.recipe-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-title {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.meta-text {
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.75rem;
+  margin: 0 0 0.4rem;
+}
+
+.recipe-tags {
+  margin-top: 0.25rem;
+}

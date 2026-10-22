@@ -6,6 +6,16 @@
   margin-bottom: 0.75rem;
 }
 
+.tag-input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.tag-input-row .full-width {
+  flex: 1;
+}
+
 .hint-text {
   color: var(--mat-sys-on-surface-variant, #555);
   font-size: 0.875rem;
@@ -15,6 +25,13 @@
   margin: 1rem 0 0.5rem;
   font-size: 0.95rem;
   font-weight: 500;
+}
+
+.category-heading {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0.75rem 0 0.1rem;
+  color: var(--mat-sys-on-surface-variant, #555);
 }
 
 .description-text {
@@ -71,6 +88,26 @@
   display: flex;
   align-items: center;
   gap: 0.1rem;
+}
+
+.item-row-editing {
+  height: auto;
+  padding: 0.5rem 0;
+}
+
+.edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.edit-name-field {
+  flex: 2 1 10rem;
+}
+
+.edit-category-field {
+  flex: 1 1 8rem;
 }
 
 .quantity-value {

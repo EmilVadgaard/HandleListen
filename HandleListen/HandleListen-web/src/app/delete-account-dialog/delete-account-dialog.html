@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Slet din konto?</h2>
+
+<mat-dialog-content>
+  <p>Dette kan <strong>ikke</strong> fortrydes. Det sletter:</p>
+  <ul>
+    <li>Din konto og dit login</li>
+    <li>Dine egne handlelister</li>
+    <li>Din adgang til delte kalendere og opskriftsbøger</li>
+    <li>Kalendere eller opskriftsbøger, hvor du er den sidste med adgang - inklusiv alt indhold i dem</li>
+  </ul>
+  <p>Indhold du deler med andre, som de stadig har adgang til, bliver ikke slettet.</p>
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [disabled]="deleting()" (click)="cancel()">Annuller</button>
+  <button mat-flat-button color="warn" [disabled]="deleting()" (click)="confirmDelete()">
+    Slet min konto for altid
+  </button>
+</mat-dialog-actions>

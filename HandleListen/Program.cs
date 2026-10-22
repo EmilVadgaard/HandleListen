@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,20 @@ builder.Services.AddSingleton<AppNotifier>();
 builder.Services.AddScoped<CalendarAccessService>();
 builder.Services.AddScoped<RecipeBookAccessService>();
 builder.Services.AddScoped<KnownItemLookupService>();
+builder.Services.AddScoped<BlockService>();
+builder.Services.AddScoped<FcmPushSender>();
+builder.Services.AddHostedService<ReminderNotificationBackgroundService>();
+builder.Services.AddHttpClient<RecipeUrlImportService>();
+builder.Services.AddScoped<AiRecipeImportService>();
+builder.Services.AddHttpClient<CalendarEmailSender>();
+builder.Services.AddScoped<DigestBuilderService>();
+builder.Services.AddHostedService<DigestEmailBackgroundService>();
+
+var firebaseKeyPath = builder.Configuration["Firebase:ServiceAccountKeyPath"];
+if (!string.IsNullOrEmpty(firebaseKeyPath) && File.Exists(firebaseKeyPath))
+{
+    FirebaseApp.Create(new AppOptions { Credential = GoogleCredential.FromFile(firebaseKeyPath) });
+}
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -80,7 +96,9 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    foreach (var role in new[] { "Owner", "Moderator" })
+    // AiImporter is never auto-assigned (unlike Owner) - it's a manual allowlist for the one
+    // feature in this app with an open-ended cost (AI recipe import), granted per user on request.
+    foreach (var role in new[] { "Owner", "Moderator", "AiImporter" })
     {
         if (!await roleManager.RoleExistsAsync(role))
         {

@@ -1,0 +1,22 @@
+<div class="month-grid">
+    @for (label of weekdayLabels; track label) {
+        <div class="weekday-cell">{{ label }}</div>
+    }
+    @for (day of gridDays(); track day.getTime()) {
+        <div
+            class="day-cell"
+            [class.other-month]="!isCurrentMonth(day)"
+            (click)="openDay(day)">
+            <span class="day-number">{{ day.getDate() }}</span>
+            @for (todo of todosForDay(day).slice(0, 3); track todo.id) {
+                <div class="todo-chip" [class.done]="todo.done">{{ todo.title }}</div>
+            }
+            @if (todosForDay(day).length > 3) {
+                <div class="todo-more">+{{ todosForDay(day).length - 3 }} mere</div>
+            }
+            @if (todosForDay(day).length > 0) {
+                <div class="todo-dot"></div>
+            }
+        </div>
+    }
+</div>

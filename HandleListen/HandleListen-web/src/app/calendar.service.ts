@@ -1,15 +1,19 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CalendarEvent } from './calendar-event';
+import { CalendarEvent, CalendarEventOccurrence } from './calendar-event';
 
 @Injectable({ providedIn: 'root' })
 export class CalendarService {
     private http = inject(HttpClient);
     private readonly baseUrl = '/api/calendar-events';
 
-    getByRange(start: string, end: string): Observable<CalendarEvent[]> {
-        return this.http.get<CalendarEvent[]>(this.baseUrl, { params: { start, end } });
+    getByRange(start: string, end: string): Observable<CalendarEventOccurrence[]> {
+        return this.http.get<CalendarEventOccurrence[]>(this.baseUrl, { params: { start, end } });
+    }
+
+    getById(id: number): Observable<CalendarEvent> {
+        return this.http.get<CalendarEvent>(`${this.baseUrl}/${id}`);
     }
 
     create(event: Omit<CalendarEvent, 'id' | 'calendarId'>): Observable<CalendarEvent> {
@@ -22,5 +26,9 @@ export class CalendarService {
 
     delete(id: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${id}`);
+    }
+
+    deleteOccurrence(id: number, date: string): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/${id}/occurrences/${date}`);
     }
 }

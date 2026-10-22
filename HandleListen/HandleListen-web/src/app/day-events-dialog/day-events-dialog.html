@@ -5,15 +5,29 @@
     <mat-list>
       @for (event of events(); track event.id) {
         <mat-list-item>
-          <span matListItemTitle>{{ event.title }}</span>
+          <span matListItemTitle>
+            {{ event.title }}
+            @if (event.recurrence) {
+              <mat-icon class="recurrence-icon" aria-label="Gentagende event">repeat</mat-icon>
+            }
+          </span>
           <span matListItemLine>{{ event.time ? event.time.slice(0, 5) : 'Hele dagen' }}</span>
           <div matListItemMeta class="event-actions">
             <button mat-icon-button (click)="startEdit(event)" aria-label="Redigér">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button (click)="remove(event)" aria-label="Slet">
-              <mat-icon>delete_outline</mat-icon>
-            </button>
+            @if (event.recurrence) {
+              <button mat-icon-button (click)="removeOccurrence(event)" aria-label="Slet kun dette event">
+                <mat-icon>event_busy</mat-icon>
+              </button>
+              <button mat-icon-button (click)="removeSeries(event)" aria-label="Slet gentagende event">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            } @else {
+              <button mat-icon-button (click)="removeSeries(event)" aria-label="Slet">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            }
           </div>
         </mat-list-item>
       }
@@ -42,6 +56,19 @@
     </mat-form-field>
   }
 
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Gentages</mat-label>
+    <mat-select [(ngModel)]="recurrence" name="recurrence">
+      <mat-option value="">Ingen - kun denne dag</mat-option>
+      <mat-option value="Weekly">Ugentligt (samme ugedag)</mat-option>
+      <mat-option value="Monthly">Månedligt (samme månedsdag)</mat-option>
+      <mat-option value="Yearly">Årligt (samme dato)</mat-option>
+    </mat-select>
+  </mat-form-field>
+  @if (isEditingRecurring) {
+    <p class="hint-text">Ændringer gælder hele serien - start-datoen for serien kan ikke ændres her.</p>
+  }
+
   <div class="reminder-row">
     <mat-form-field appearance="outline" class="reminder-select">
       <mat-label>Påmindelse</mat-label>
@@ -59,6 +86,13 @@
       </mat-form-field>
     }
   </div>
+
+  @if (reminderMode !== 'none') {
+    <div class="reminder-channels">
+      <mat-checkbox [(ngModel)]="pushReminderEnabled" name="pushReminderEnabled">Send som app-notifikation</mat-checkbox>
+      <mat-checkbox [(ngModel)]="emailReminderEnabled" name="emailReminderEnabled">Send som email</mat-checkbox>
+    </div>
+  }
 
   @if (formError()) {
     <p class="error-text">{{ formError() }}</p>

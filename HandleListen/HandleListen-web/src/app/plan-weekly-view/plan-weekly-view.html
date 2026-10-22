@@ -1,0 +1,58 @@
+<div class="day-row">
+  @for (day of days(); track day.dayIndex) {
+    <mat-card class="day-card">
+      <h3 class="day-label">{{ day.label }}</h3>
+
+      @if (todosForDay(day.dayIndex).length > 0) {
+        <mat-list>
+          @for (todo of todosForDay(day.dayIndex); track todo.id) {
+            <mat-list-item>
+              <mat-checkbox [checked]="todo.done" (change)="toggleDone(todo)"></mat-checkbox>
+              <span matListItemTitle [class.done]="todo.done">
+                {{ todo.title }}
+                @if (todo.time) {
+                  <span class="todo-time">{{ todo.time.slice(0, 5) }}</span>
+                }
+              </span>
+              <div matListItemMeta class="todo-actions">
+                <button mat-icon-button (click)="startEdit(todo)" aria-label="Redigér">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteTodo(todo)" aria-label="Slet">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </mat-list-item>
+          }
+        </mat-list>
+      }
+
+      @if (addingForDay === day.dayIndex) {
+        <div class="inline-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Titel</mat-label>
+            <input matInput [(ngModel)]="title" name="title" (keyup.enter)="save()" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Tidspunkt (valgfri)</mat-label>
+            <input matInput type="text" placeholder="tt:mm" maxlength="5" [(ngModel)]="time" name="time" (keyup.enter)="save()" />
+          </mat-form-field>
+          @if (formError) {
+            <p class="error-text">{{ formError }}</p>
+          }
+          <div class="form-actions">
+            <button mat-button (click)="cancel()">Annullér</button>
+            <button mat-flat-button color="primary" (click)="save()" [disabled]="!title.trim()">
+              {{ editingTodoId !== null ? 'Gem' : 'Tilføj' }}
+            </button>
+          </div>
+        </div>
+      } @else {
+        <button mat-button class="add-button" (click)="startAdd(day.dayIndex)">
+          <mat-icon>add</mat-icon>
+          Todo
+        </button>
+      }
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,19 @@
+.full-width {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.month-year-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.month-year-row mat-form-field {
+  flex: 1;
+}
+
+.error-text {
+  color: #b3261e;
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0;
+}

@@ -9,11 +9,17 @@
   @if (mode() === 'new') {
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Kategori</mat-label>
-      <mat-select [(ngModel)]="category">
-        @for (c of categories; track c) {
+      <input
+        matInput
+        [ngModel]="category()"
+        (ngModelChange)="category.set($event)"
+        [matAutocomplete]="categoryAuto"
+        placeholder="Vælg eller skriv en ny kategori" />
+      <mat-autocomplete #categoryAuto="matAutocomplete">
+        @for (c of filteredCategories(); track c) {
           <mat-option [value]="c">{{ c }}</mat-option>
         }
-      </mat-select>
+      </mat-autocomplete>
     </mat-form-field>
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Standard-enhed (valgfrit, bruges kun i opskrifter)</mat-label>

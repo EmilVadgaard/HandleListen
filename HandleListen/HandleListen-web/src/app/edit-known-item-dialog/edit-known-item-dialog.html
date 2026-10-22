@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>Rediger kendt vare</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Navn</mat-label>
+    <input matInput [(ngModel)]="canonicalName" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Kategori</mat-label>
+    <input
+      matInput
+      [ngModel]="category()"
+      (ngModelChange)="category.set($event)"
+      [matAutocomplete]="categoryAuto"
+      placeholder="Vælg eller skriv en ny kategori" />
+    <mat-autocomplete #categoryAuto="matAutocomplete">
+      @for (c of filteredCategories(); track c) {
+        <mat-option [value]="c">{{ c }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Standard-enhed (valgfrit)</mat-label>
+    <mat-select [(ngModel)]="defaultUnit">
+      <mat-option [value]="null">Ingen</mat-option>
+      @for (u of units; track u) {
+        <mat-option [value]="u">{{ unitLabels[u] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-stroked-button [disabled]="saving()" (click)="save()">Gem ændringer</button>
+
+  <h3 class="section-heading">Navne der matcher denne vare</h3>
+  <mat-chip-set class="aliases-row">
+    @for (alias of item().aliases; track alias.id) {
+      <mat-chip (removed)="removeAlias(alias.id)">
+        {{ alias.alias }}
+        <button matChipRemove aria-label="Fjern navn">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+    }
+  </mat-chip-set>
+
+  <div class="alias-input-row">
+    <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+      <mat-label>Tilføj et navn/alias</mat-label>
+      <input matInput [(ngModel)]="newAlias" placeholder="f.eks. en anden skrivemåde" (keyup.enter)="addAlias()" />
+    </mat-form-field>
+    <button mat-icon-button [disabled]="!newAlias.trim()" (click)="addAlias()" aria-label="Tilføj navn">
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button color="warn" (click)="deleteItem()">Slet kendt vare</button>
+  <button mat-button (click)="close()">Luk</button>
+</mat-dialog-actions>

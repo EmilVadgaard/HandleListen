@@ -90,4 +90,22 @@ export class RealtimeService {
     onMealPlansChanged(callback: () => void) {
         this.connect().then(() => this.connection?.on('MealPlansChanged', callback));
     }
+
+    async joinPlan(planId: number) {
+        await this.connect();
+        await this.connection?.invoke('JoinPlan', planId).catch(err => console.error('Failed to join plan group', err));
+    }
+
+    async leavePlan(planId: number) {
+        await this.connect();
+        await this.connection?.invoke('LeavePlan', planId).catch(err => console.error('Failed to leave plan group', err));
+    }
+
+    onPlanChanged(callback: (planId: number) => void) {
+        this.connect().then(() => this.connection?.on('PlanChanged', callback));
+    }
+
+    onPlansChanged(callback: () => void) {
+        this.connect().then(() => this.connection?.on('PlansChanged', callback));
+    }
 }

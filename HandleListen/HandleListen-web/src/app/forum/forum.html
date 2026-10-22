@@ -1,0 +1,42 @@
+<div class="forum-page">
+  <mat-form-field appearance="outline" class="search-field" subscriptSizing="dynamic">
+    <mat-label>Søg opskrifter eller tags</mat-label>
+    <input matInput [(ngModel)]="searchQuery" (ngModelChange)="onSearchInput()" placeholder="f.eks. 30 minutter" />
+    <mat-icon matPrefix>search</mat-icon>
+  </mat-form-field>
+
+  @if (topSearches().length > 0) {
+    <h3 class="section-heading">Populære søgninger</h3>
+    <div class="top-searches-row">
+      @for (search of topSearches(); track search.query) {
+        <button type="button" class="top-search-card" (click)="searchFor(search.query)">
+          {{ search.query }}
+        </button>
+      }
+    </div>
+  }
+
+  <h3 class="section-heading">Opskrifter</h3>
+
+  @if (!loading() && recipes().length === 0) {
+    <p class="hint-text">Ingen delte opskrifter fundet.</p>
+  }
+
+  <div class="recipe-grid">
+    @for (recipe of recipes(); track recipe.id) {
+      <mat-card class="recipe-card" (click)="openRecipe(recipe)">
+        <mat-card-content>
+          <h3 class="recipe-title">{{ recipe.title }}</h3>
+          <p class="meta-text">Delt af {{ recipe.sharedByEmail }} · {{ recipe.addedCount }}x tilføjet</p>
+          @if (recipe.tags.length > 0) {
+            <mat-chip-set class="recipe-tags">
+              @for (tag of recipe.tags; track tag) {
+                <mat-chip disabled>{{ tag }}</mat-chip>
+              }
+            </mat-chip-set>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</div>

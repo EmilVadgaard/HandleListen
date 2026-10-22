@@ -1,0 +1,33 @@
+@if (plan()) {
+  <div class="plan-toolbar">
+    <h1 class="plan-title">{{ plan()!.name }}</h1>
+    <mat-chip-set>
+      <mat-chip>{{ typeLabel(plan()!.type) }}</mat-chip>
+      @if (plan()!.isActive) {
+        <mat-chip class="active-chip">Aktiv</mat-chip>
+      }
+    </mat-chip-set>
+    <div class="toolbar-spacer"></div>
+    @if (!plan()!.isActive) {
+      <button mat-stroked-button color="primary" (click)="activate()" [disabled]="activating()">
+        <mat-icon>play_arrow</mat-icon>
+        Aktivér
+      </button>
+    }
+    <button mat-icon-button (click)="openSettings()" aria-label="Plan-indstillinger">
+      <mat-icon>settings</mat-icon>
+    </button>
+  </div>
+
+  @switch (plan()!.type) {
+    @case ('Standard') {
+      <app-plan-standard-view [plan]="plan()!" [todos]="todos()" (changed)="refresh()" />
+    }
+    @case ('Weekly') {
+      <app-plan-weekly-view [plan]="plan()!" [todos]="todos()" (changed)="refresh()" />
+    }
+    @case ('Monthly') {
+      <app-plan-monthly-view [plan]="plan()!" [todos]="todos()" (changed)="refresh()" />
+    }
+  }
+}

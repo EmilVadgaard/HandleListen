@@ -36,13 +36,27 @@ public class CalendarEventController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CalendarEvent>>> GetByRange([FromQuery] DateOnly start, [FromQuery] DateOnly end)
+    public async Task<ActionResult<IEnumerable<CalendarEventOccurrenceDto>>> GetByRange([FromQuery] DateOnly start, [FromQuery] DateOnly end)
     {
         var calendarId = await GetOrCreateMyCalendarIdAsync();
-        return await _context.CalendarEvents
-            .Where(e => e.CalendarId == calendarId && e.Date >= start && e.Date <= end)
+        var events = await _context.CalendarEvents.Where(e => e.CalendarId == calendarId).ToListAsync();
+
+        var recurringIds = events.Where(e => e.Recurrence is not null).Select(e => e.Id).ToList();
+        var exceptionsByEvent = (await _context.CalendarEventExceptions
+                .Where(x => recurringIds.Contains(x.CalendarEventId))
+                .ToListAsync())
+            .GroupBy(x => x.CalendarEventId)
+            .ToDictionary(g => g.Key, g => (ISet<DateOnly>)g.Select(x => x.ExceptionDate).ToHashSet());
+
+        var result = RecurringEventService.ExpandEvents(events, start, end, exceptionsByEvent)
+            .Select(x => new CalendarEventOccurrenceDto(
+                x.Event.Id, x.Event.Title, x.Event.Description, x.Date, x.Event.Time,
+                x.Event.ReminderValue, x.Event.ReminderUnit, x.Event.Recurrence,
+                x.Event.PushReminderEnabled, x.Event.EmailReminderEnabled))
             .OrderBy(e => e.Date).ThenBy(e => e.Time)
-            .ToListAsync();
+            .ToList();
+
+        return result;
     }
 
     [HttpPost]
@@ -82,12 +96,16 @@ public class CalendarEventController : ControllerBase
         item.Time = updatedEvent.Time;
         item.ReminderValue = updatedEvent.ReminderValue;
         item.ReminderUnit = updatedEvent.ReminderUnit;
+        item.Recurrence = updatedEvent.Recurrence;
+        item.PushReminderEnabled = updatedEvent.PushReminderEnabled;
+        item.EmailReminderEnabled = updatedEvent.EmailReminderEnabled;
 
         await _context.SaveChangesAsync();
         await _notifier.NotifyCalendarEventsChanged(calendarId);
         return NoContent();
     }
 
+    // Deletes the whole series (or the only occurrence, for a non-recurring event).
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -97,6 +115,25 @@ public class CalendarEventController : ControllerBase
 
         _context.CalendarEvents.Remove(item);
         await _context.SaveChangesAsync();
+        await _notifier.NotifyCalendarEventsChanged(calendarId);
+        return NoContent();
+    }
+
+    // Skips one computed occurrence of a recurring series without touching the series itself.
+    [HttpDelete("{id}/occurrences/{date}")]
+    public async Task<IActionResult> DeleteOccurrence(int id, DateOnly date)
+    {
+        var calendarId = await GetOrCreateMyCalendarIdAsync();
+        var item = await _context.CalendarEvents.FirstOrDefaultAsync(e => e.Id == id && e.CalendarId == calendarId);
+        if (item is null) return NotFound();
+        if (item.Recurrence is null) return BadRequest("Dette event gentager sig ikke - slet hele eventet i stedet.");
+
+        var exists = await _context.CalendarEventExceptions.AnyAsync(x => x.CalendarEventId == id && x.ExceptionDate == date);
+        if (!exists)
+        {
+            _context.CalendarEventExceptions.Add(new CalendarEventException { CalendarEventId = id, ExceptionDate = date });
+            await _context.SaveChangesAsync();
+        }
         await _notifier.NotifyCalendarEventsChanged(calendarId);
         return NoContent();
     }

@@ -13,6 +13,16 @@
   margin-bottom: 0.5rem;
 }
 
+.tag-input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.tag-input-row .full-width {
+  flex: 1;
+}
+
 .error-text {
   color: #b3261e;
   font-size: 0.875rem;

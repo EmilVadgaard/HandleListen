@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Ny plan</h2>
+
+<mat-dialog-content>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Navn</mat-label>
+    <input matInput [(ngModel)]="name" name="name" (keyup.enter)="save()" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Type</mat-label>
+    <mat-select [(ngModel)]="type" name="type">
+      <mat-option value="Standard">Standard - fri liste</mat-option>
+      <mat-option value="Weekly">Ugeplan - dage med todos</mat-option>
+      <mat-option value="Monthly">Månedsplan - en hel måned</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  @if (type === 'Weekly') {
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Antal dage</mat-label>
+      <input matInput type="number" [min]="1" [max]="31" [(ngModel)]="dayCount" name="dayCount" />
+    </mat-form-field>
+  }
+
+  @if (type === 'Monthly') {
+    <div class="month-year-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Måned</mat-label>
+        <mat-select [(ngModel)]="month" name="month">
+          @for (m of months; track m.value) {
+            <mat-option [value]="m.value">{{ m.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>År</mat-label>
+        <mat-select [(ngModel)]="year" name="year">
+          @for (y of years; track y) {
+            <mat-option [value]="y">{{ y }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  }
+
+  @if (error()) {
+    <p class="error-text">{{ error() }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annullér</button>
+  <button mat-flat-button color="primary" (click)="save()" [disabled]="!name.trim() || saving()">Opret</button>
+</mat-dialog-actions>

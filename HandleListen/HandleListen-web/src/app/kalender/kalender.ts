@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CalendarService } from '../calendar.service';
 import { CalendarSharingService } from '../calendar-sharing.service';
 import { RealtimeService } from '../realtime.service';
-import { CalendarEvent } from '../calendar-event';
+import { CalendarEventOccurrence } from '../calendar-event';
 import { DayEventsDialog, DayEventsDialogData } from '../day-events-dialog/day-events-dialog';
 import { ShareCalendarDialog } from '../share-calendar-dialog/share-calendar-dialog';
 
@@ -27,7 +27,7 @@ export class Kalender implements OnInit {
   readonly weekdayLabels = WEEKDAY_LABELS;
 
   currentDate = signal(new Date());
-  events = signal<CalendarEvent[]>([]);
+  events = signal<CalendarEventOccurrence[]>([]);
   currentCalendarId = signal<number | null>(null);
   pendingInviteCount = signal(0);
 
@@ -48,7 +48,7 @@ export class Kalender implements OnInit {
   });
 
   private eventsByDate = computed(() => {
-    const map = new Map<string, CalendarEvent[]>();
+    const map = new Map<string, CalendarEventOccurrence[]>();
     for (const event of this.events()) {
       const list = map.get(event.date) ?? [];
       list.push(event);
@@ -80,7 +80,7 @@ export class Kalender implements OnInit {
     });
   }
 
-  eventsForDay(day: Date): CalendarEvent[] {
+  eventsForDay(day: Date): CalendarEventOccurrence[] {
     return this.eventsByDate().get(this.toISODate(day)) ?? [];
   }
 

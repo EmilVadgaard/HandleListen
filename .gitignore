@@ -5,6 +5,11 @@
 
 # dotenv files
 .env
+.env.*
+
+# Firebase service account credentials (push notifications) - never commit these
+firebase-service-account*.json
+google-services.json
 
 # User-specific files
 *.rsuser

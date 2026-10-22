@@ -1,0 +1,82 @@
+<div class="settings-page">
+  <h1 class="page-title">Indstillinger</h1>
+
+  <h2 class="section-heading">Udseende</h2>
+  <mat-slide-toggle [checked]="theme.isDark()" (change)="theme.toggle()">Mørkt tema</mat-slide-toggle>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <h2 class="section-heading">Skift adgangskode</h2>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Nuværende adgangskode</mat-label>
+    <input matInput type="password" [(ngModel)]="oldPassword" autocomplete="current-password" />
+  </mat-form-field>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Ny adgangskode</mat-label>
+    <input matInput type="password" [(ngModel)]="newPassword" autocomplete="new-password" />
+  </mat-form-field>
+  @if (passwordMessage()) {
+    <p class="message-text">{{ passwordMessage() }}</p>
+  }
+  <button mat-stroked-button [disabled]="!oldPassword || !newPassword || passwordSaving()" (click)="changePassword()">
+    Skift adgangskode
+  </button>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <h2 class="section-heading">Oversigtsmails</h2>
+  <p class="hint-text">Få en mail med kommende begivenheder - vælg hvor ofte, eller slå det fra.</p>
+  <mat-radio-group [(ngModel)]="digestFrequency" class="frequency-group">
+    <mat-radio-button value="None">Ingen oversigtsmails</mat-radio-button>
+    <mat-radio-button value="Daily">Dagligt (de næste 7 dage)</mat-radio-button>
+    <mat-radio-button value="Weekly">Ugentligt (søndag kl. 07:00, om den kommende uge)</mat-radio-button>
+    <mat-radio-button value="Monthly">Månedligt (sidste dag i måneden kl. 07:00, om den næste måned)</mat-radio-button>
+  </mat-radio-group>
+  @if (digestMessage()) {
+    <p class="message-text">{{ digestMessage() }}</p>
+  }
+  <div class="button-row">
+    <button mat-stroked-button [disabled]="digestFrequency === 'None' || digestSending()" (click)="sendDigestNow()">Send nu</button>
+    <button mat-flat-button color="primary" [disabled]="digestSaving()" (click)="saveDigestPreference()">Gem</button>
+  </div>
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <h2 class="section-heading">Blokerede brugere</h2>
+  <p class="hint-text">En blokeret bruger kan ikke længere sende dig invitationer til kalendere eller opskriftsbøger.</p>
+  <div class="block-input-row">
+    <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+      <mat-label>Email på bruger der skal blokeres</mat-label>
+      <input matInput [(ngModel)]="newBlockEmail" (keyup.enter)="blockUser()" />
+    </mat-form-field>
+    <button mat-icon-button [disabled]="!newBlockEmail.trim()" (click)="blockUser()" aria-label="Blokér">
+      <mat-icon>block</mat-icon>
+    </button>
+  </div>
+  @if (blockError()) {
+    <p class="error-text">{{ blockError() }}</p>
+  }
+  @if (blockedUsers().length > 0) {
+    <mat-list>
+      @for (user of blockedUsers(); track user.id) {
+        <mat-list-item>
+          <span matListItemTitle>{{ user.email }}</span>
+          <button mat-icon-button matListItemMeta (click)="unblockUser(user)" aria-label="Fjern blokering">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+
+  <mat-divider class="section-divider"></mat-divider>
+
+  <h2 class="section-heading">Konto</h2>
+  <p class="hint-text">
+    Læs <a href="/privatlivspolitik" target="_blank" rel="noopener">privatlivspolitikken</a> for at se hvilke data vi gemmer om dig.
+  </p>
+  <button mat-flat-button color="warn" (click)="openDeleteAccountDialog()">
+    <mat-icon>delete_forever</mat-icon>
+    Slet min konto
+  </button>
+</div>

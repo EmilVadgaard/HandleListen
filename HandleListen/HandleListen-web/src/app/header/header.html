@@ -8,6 +8,30 @@
   <span class="app-title">Min planlægger</span>
   <span class="spacer"></span>
   @if (auth.isLoggedIn()) {
+    <button mat-icon-button [matMenuTriggerFor]="notificationMenu" aria-label="Notifikationer">
+      <mat-icon [matBadge]="notifications.pendingCount() > 0 ? notifications.pendingCount() : null" matBadgeColor="warn" matBadgeSize="small">
+        notifications
+      </mat-icon>
+    </button>
+    <mat-menu #notificationMenu="matMenu" class="notification-menu">
+      @if (notifications.pendingInvites().length === 0) {
+        <div class="notification-empty">Ingen nye notifikationer</div>
+      } @else {
+        @for (invite of notifications.pendingInvites(); track invite.id) {
+          <div class="notification-row" (click)="$event.stopPropagation()">
+            <span class="notification-text"><strong>{{ invite.fromEmail }}</strong> {{ inviteLabel(invite) }}</span>
+            <div class="notification-actions">
+              <button mat-icon-button color="primary" (click)="accept(invite)" aria-label="Accepter">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button mat-icon-button (click)="decline(invite)" aria-label="Afvis">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </mat-menu>
     <span class="user-email">{{ auth.email() }}</span>
   } @else {
     <a mat-button routerLink="/login">Log ind</a>

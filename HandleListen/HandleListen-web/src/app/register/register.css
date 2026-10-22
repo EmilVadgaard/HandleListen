@@ -13,6 +13,12 @@
   width: 100%;
 }
 
+.privacy-checkbox {
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
 .error-text {
   color: #b3261e;
   font-size: 0.875rem;

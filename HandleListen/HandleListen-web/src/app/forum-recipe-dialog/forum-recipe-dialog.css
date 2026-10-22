@@ -1,0 +1,43 @@
+.loading-content {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.meta-text {
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.8rem;
+  margin: 0 0 0.75rem;
+}
+
+.tags-row {
+  margin-bottom: 0.5rem;
+}
+
+.section-heading {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.description-text {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.875rem;
+}
+
+.amount-text {
+  margin-left: 0.4rem;
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.875rem;
+}
+
+.error-text {
+  color: #b3261e;
+  font-size: 0.875rem;
+  margin: 0.5rem 0 0;
+}

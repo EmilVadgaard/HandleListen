@@ -21,11 +21,15 @@
           <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required />
         </mat-form-field>
 
+        <mat-checkbox [(ngModel)]="acceptedPrivacyPolicy" name="acceptedPrivacyPolicy" class="privacy-checkbox">
+          Jeg har læst og accepterer <a href="/privatlivspolitik" target="_blank" rel="noopener">privatlivspolitikken</a>
+        </mat-checkbox>
+
         @if (errorMessage()) {
           <p class="error-text">{{ errorMessage() }}</p>
         }
 
-        <button mat-flat-button color="primary" type="submit" class="full-width">Opret konto</button>
+        <button mat-flat-button color="primary" type="submit" class="full-width" [disabled]="!acceptedPrivacyPolicy">Opret konto</button>
       </form>
     </mat-card-content>
     <mat-card-actions align="end">

@@ -62,7 +62,17 @@
                 (enterPressed)="add()" />
             <mat-form-field appearance="outline" class="category-field" subscriptSizing="dynamic">
                 <mat-label>Kategori</mat-label>
-                <input matInput [(ngModel)]="newCategory" (keyup.enter)="add()" />
+                <input
+                    matInput
+                    [ngModel]="newCategory()"
+                    (ngModelChange)="newCategory.set($event)"
+                    [matAutocomplete]="newCategoryAuto"
+                    (keyup.enter)="add()" />
+                <mat-autocomplete #newCategoryAuto="matAutocomplete">
+                    @for (c of filteredNewCategories(); track c) {
+                        <mat-option [value]="c">{{ c }}</mat-option>
+                    }
+                </mat-autocomplete>
             </mat-form-field>
             <mat-form-field appearance="outline" class="quantity-field" subscriptSizing="dynamic">
                 <mat-label>Antal</mat-label>
@@ -85,21 +95,59 @@
             <h2 class="category-heading">{{ group.category }}</h2>
             <mat-list>
                 @for (item of group.items; track item.id) {
-                    <mat-list-item class="item-row">
-                        <span matListItemTitle>{{ item.name }}</span>
-                        <div matListItemMeta class="item-actions">
-                            <button mat-icon-button (click)="quantity(item, item.quantity - 1)" [disabled]="item.quantity <= 1" aria-label="Færre">
-                                <mat-icon>remove</mat-icon>
-                            </button>
-                            <span class="quantity-value">{{ item.quantity }}</span>
-                            <button mat-icon-button (click)="quantity(item, item.quantity + 1)" aria-label="Flere">
-                                <mat-icon>add</mat-icon>
-                            </button>
-                            <button mat-icon-button (click)="remove(item.id)" aria-label="Fjern vare">
-                                <mat-icon>delete_outline</mat-icon>
-                            </button>
-                        </div>
-                    </mat-list-item>
+                    @if (editingItemId() === item.id) {
+                        <mat-list-item class="item-row item-row-editing" lines="2">
+                            <div matListItemTitle class="edit-row">
+                                <app-item-name-field
+                                    class="edit-name-field"
+                                    label="Vare"
+                                    [(name)]="editName"
+                                    (categorySuggested)="onEditCategorySuggested($event)"
+                                    (enterPressed)="saveEditItem(item)" />
+                                <mat-form-field appearance="outline" class="edit-category-field" subscriptSizing="dynamic">
+                                    <mat-label>Kategori</mat-label>
+                                    <input
+                                        matInput
+                                        [ngModel]="editCategory()"
+                                        (ngModelChange)="editCategory.set($event)"
+                                        [matAutocomplete]="editCategoryAuto"
+                                        (keyup.enter)="saveEditItem(item)" />
+                                    <mat-autocomplete #editCategoryAuto="matAutocomplete">
+                                        @for (c of filteredEditCategories(); track c) {
+                                            <mat-option [value]="c">{{ c }}</mat-option>
+                                        }
+                                    </mat-autocomplete>
+                                </mat-form-field>
+                            </div>
+                            <div matListItemMeta class="item-actions">
+                                <button mat-icon-button (click)="saveEditItem(item)" aria-label="Gem">
+                                    <mat-icon>check</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="cancelEditItem()" aria-label="Annullér">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </div>
+                        </mat-list-item>
+                    } @else {
+                        <mat-list-item class="item-row">
+                            <span matListItemTitle>{{ item.name }}</span>
+                            <div matListItemMeta class="item-actions">
+                                <button mat-icon-button (click)="startEditItem(item)" aria-label="Redigér vare">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="quantity(item, item.quantity - 1)" [disabled]="item.quantity <= 1" aria-label="Færre">
+                                    <mat-icon>remove</mat-icon>
+                                </button>
+                                <span class="quantity-value">{{ item.quantity }}</span>
+                                <button mat-icon-button (click)="quantity(item, item.quantity + 1)" aria-label="Flere">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="remove(item.id)" aria-label="Fjern vare">
+                                    <mat-icon>delete_outline</mat-icon>
+                                </button>
+                            </div>
+                        </mat-list-item>
+                    }
                 }
             </mat-list>
         }

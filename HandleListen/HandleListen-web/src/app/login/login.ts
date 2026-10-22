@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../auth';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -17,10 +17,13 @@ import { MatButtonModule } from '@angular/material/button';
 export class Login {
   private router = inject(Router);
   private auth = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   email = '';
   password = '';
-  errorMessage = signal<string | null>(null);
+  errorMessage = signal<string | null>(
+    this.route.snapshot.queryParamMap.get('sessionExpired') ? 'Din session er udløbet. Log venligst ind igen.' : null
+  );
 
   login() {
     this.errorMessage.set(null);

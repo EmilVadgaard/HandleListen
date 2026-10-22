@@ -96,4 +96,66 @@ public class KnownItemsController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    // Admin manager (see AdminController) - browse/edit/delete the whole catalog. Owner,Moderator
+    // like the rest of this controller's mutating endpoints, not Owner-only like AdminController's
+    // request queue, since curating known items has always been a shared Owner/Moderator job.
+    [Authorize(Roles = "Owner,Moderator")]
+    [HttpGet("all")]
+    public async Task<ActionResult<IEnumerable<KnownItemAdminDto>>> GetAllForAdmin()
+    {
+        var items = await _context.KnownItems.OrderBy(k => k.CanonicalName).ToListAsync();
+        var aliases = await _context.KnownItemAliases.ToListAsync();
+
+        return items
+            .Select(k => new KnownItemAdminDto(
+                k.Id, k.CanonicalName, k.Category, k.DefaultUnit,
+                aliases.Where(a => a.KnownItemId == k.Id).Select(a => new KnownItemAliasDto(a.Id, a.Alias)).ToList()))
+            .ToList();
+    }
+
+    [Authorize(Roles = "Owner,Moderator")]
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, UpdateKnownItemRequest request)
+    {
+        var item = await _context.KnownItems.FindAsync(id);
+        if (item is null) return NotFound();
+
+        var name = request.CanonicalName?.Trim() ?? string.Empty;
+        var category = request.Category?.Trim() ?? string.Empty;
+        if (name.Length == 0 || category.Length == 0) return BadRequest();
+
+        item.CanonicalName = name;
+        item.Category = category;
+        item.DefaultUnit = request.DefaultUnit;
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Owner,Moderator")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var item = await _context.KnownItems.FindAsync(id);
+        if (item is null) return NotFound();
+
+        _context.KnownItems.Remove(item);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Owner,Moderator")]
+    [HttpDelete("{id}/aliases/{aliasId}")]
+    public async Task<IActionResult> RemoveAlias(int id, int aliasId)
+    {
+        var remainingCount = await _context.KnownItemAliases.CountAsync(a => a.KnownItemId == id);
+        if (remainingCount <= 1) return BadRequest("Et kendt item skal have mindst ét navn - slet hele kendt item i stedet.");
+
+        var alias = await _context.KnownItemAliases.FirstOrDefaultAsync(a => a.Id == aliasId && a.KnownItemId == id);
+        if (alias is null) return NotFound();
+
+        _context.KnownItemAliases.Remove(alias);
+        await _context.SaveChangesAsync();
+        return NoContent();
+    }
 }

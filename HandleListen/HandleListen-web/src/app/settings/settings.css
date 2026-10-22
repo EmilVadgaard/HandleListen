@@ -1,0 +1,65 @@
+.settings-page {
+  max-width: 32rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin: 0 0 1rem;
+}
+
+.section-heading {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 0.75rem;
+}
+
+.section-divider {
+  margin: 1.5rem 0;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.875rem;
+  margin: 0 0 0.75rem;
+}
+
+.message-text {
+  font-size: 0.875rem;
+  color: var(--mat-sys-primary, #0b57d0);
+  margin: 0.5rem 0;
+}
+
+.error-text {
+  color: #b3261e;
+  font-size: 0.875rem;
+  margin: 0.5rem 0;
+}
+
+.frequency-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.block-input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.block-input-row .full-width {
+  flex: 1;
+}

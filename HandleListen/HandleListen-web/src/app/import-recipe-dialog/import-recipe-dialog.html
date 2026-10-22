@@ -1,0 +1,182 @@
+<h2 mat-dialog-title>Importér opskrift</h2>
+
+<mat-dialog-content>
+  @if (!imported()) {
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="Link">
+        <p class="hint-text">Indsæt et link til en opskrift. Virker på sider, der har opskriftsdata indbygget (de fleste etablerede madblogs/opskriftssider har det).</p>
+        <div class="url-row">
+          <mat-form-field appearance="outline" class="full-width" subscriptSizing="dynamic">
+            <mat-label>Link til opskrift</mat-label>
+            <input matInput [(ngModel)]="url" name="url" placeholder="https://..." (keyup.enter)="fetchFromUrl()" />
+          </mat-form-field>
+          <button mat-flat-button color="primary" [disabled]="!url.trim() || loading()" (click)="fetchFromUrl()">
+            Hent
+          </button>
+        </div>
+      </mat-tab>
+
+      @if (canImportAi()) {
+        <mat-tab label="Tekst">
+          <p class="hint-text">Indsæt teksten fra en opskrift (f.eks. fra en note eller en besked).</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Opskriftstekst</mat-label>
+            <textarea matInput rows="8" [(ngModel)]="pastedText" name="pastedText"></textarea>
+          </mat-form-field>
+          <button mat-flat-button color="primary" [disabled]="!pastedText.trim() || loading()" (click)="fetchFromText()">
+            Læs opskrift
+          </button>
+        </mat-tab>
+
+        <mat-tab label="Billede">
+          <p class="hint-text">Tag et billede af en opskrift (f.eks. fra en kogebog), eller vælg et fra din telefon.</p>
+
+          <input #galleryInput type="file" accept="image/jpeg,image/png,image/webp" class="hidden-file-input" (change)="onFileSelected($event)" />
+          @if (isMobile) {
+            <input #cameraInput type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="hidden-file-input" (change)="onFileSelected($event)" />
+          }
+
+          <div class="image-source-row">
+            <button mat-stroked-button type="button" (click)="openGalleryPicker()">
+              <mat-icon>photo_library</mat-icon>
+              Vælg billede
+            </button>
+            @if (isMobile) {
+              <button mat-stroked-button type="button" (click)="openCamera()">
+                <mat-icon>photo_camera</mat-icon>
+                Kamera
+              </button>
+            }
+          </div>
+
+          @if (selectedFile) {
+            <p class="selected-file-text">Valgt: {{ selectedFile.name }}</p>
+          }
+
+          <button mat-flat-button color="primary" class="image-fetch-button" [disabled]="!selectedFile || loading()" (click)="fetchFromImage()">
+            Læs opskrift
+          </button>
+        </mat-tab>
+      }
+    </mat-tab-group>
+
+    @if (loading()) {
+      <div class="loading-row">
+        <mat-spinner diameter="24"></mat-spinner>
+        <span>Henter opskrift...</span>
+      </div>
+    }
+
+    @if (error()) {
+      <p class="error-text">{{ error() }}</p>
+    }
+  } @else {
+    <p class="hint-text">Tjek igennem og ret til, inden du gemmer — importen er ikke altid perfekt.</p>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Titel</mat-label>
+      <input matInput [(ngModel)]="title" name="title" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Fremgangsmåde</mat-label>
+      <textarea matInput rows="6" [(ngModel)]="description" name="description"></textarea>
+    </mat-form-field>
+
+    <div class="ingredients-heading-row">
+      <h3 class="section-heading">Ingredienser</h3>
+      @if (canImportAi() && ingredients().length > 0) {
+        <button
+          mat-stroked-button
+          type="button"
+          [disabled]="fixingIngredients()"
+          (click)="aiFixIngredients()">
+          @if (fixingIngredients()) {
+            <mat-spinner diameter="16"></mat-spinner>
+          } @else {
+            <mat-icon>auto_fix_high</mat-icon>
+          }
+          AI Ret
+        </button>
+      }
+    </div>
+
+    <div class="add-item-row">
+      <app-item-name-field
+        class="name-field"
+        label="Ingrediens"
+        [(name)]="newIngredientName"
+        (enterPressed)="addIngredient()"
+        (categorySuggested)="onCategorySuggested($event)"
+        (unitSuggested)="onUnitSuggested($event)" />
+      <mat-form-field appearance="outline" class="category-field" subscriptSizing="dynamic">
+        <mat-label>Kategori</mat-label>
+        <input
+          matInput
+          [ngModel]="newIngredientCategory()"
+          (ngModelChange)="newIngredientCategory.set($event)"
+          [matAutocomplete]="ingredientCategoryAuto"
+          placeholder="Vælg eller skriv en ny" />
+        <mat-autocomplete #ingredientCategoryAuto="matAutocomplete">
+          @for (c of filteredIngredientCategories(); track c) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="quantity-field" subscriptSizing="dynamic">
+        <mat-label>Antal</mat-label>
+        <input matInput type="number" min="1" [(ngModel)]="newIngredientQuantity" (keyup.enter)="addIngredient()" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="amount-field" subscriptSizing="dynamic">
+        <mat-label>Mængde</mat-label>
+        <input matInput type="number" min="0" step="0.1" [(ngModel)]="newIngredientAmount" (keyup.enter)="addIngredient()" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="unit-field" subscriptSizing="dynamic">
+        <mat-label>Enhed</mat-label>
+        <mat-select [(ngModel)]="newIngredientUnit">
+          <mat-option [value]="null">–</mat-option>
+          @for (u of units; track u) {
+            <mat-option [value]="u">{{ unitLabels[u] }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-icon-button color="primary" (click)="addIngredient()" aria-label="Tilføj ingrediens">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    @if (ingredients().length === 0) {
+      <p class="hint-text">Ingen ingredienser fundet. Tilføj dem manuelt ovenfor.</p>
+    } @else {
+      <mat-list>
+        @for (ingredient of ingredients(); track $index) {
+          <mat-list-item class="item-row">
+            <span matListItemTitle>
+              {{ ingredient.quantity }}x {{ ingredient.name }}
+              @if (ingredient.amount) {
+                <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
+              }
+              @if (ingredient.category) {
+                <span class="category-text">({{ ingredient.category }})</span>
+              }
+            </span>
+            <button mat-icon-button matListItemMeta (click)="removeIngredient($index)" aria-label="Fjern ingrediens">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+
+    @if (error()) {
+      <p class="error-text">{{ error() }}</p>
+    }
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Annuller</button>
+  @if (imported()) {
+    <button mat-flat-button color="primary" [disabled]="!title.trim() || saving()" (click)="save()">Gem opskrift</button>
+  }
+</mat-dialog-actions>

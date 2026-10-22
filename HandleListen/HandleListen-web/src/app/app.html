@@ -27,9 +27,33 @@
                     <mat-icon matListItemIcon>restaurant_menu</mat-icon>
                     <span matListItemTitle>Madplaner</span>
                 </a>
+                <a mat-list-item routerLink="/planer" routerLinkActive="active-link" (click)="closeSidenav()">
+                    <mat-icon matListItemIcon>checklist</mat-icon>
+                    <span matListItemTitle>Planer</span>
+                </a>
+                <a mat-list-item routerLink="/forum" routerLinkActive="active-link" (click)="closeSidenav()">
+                    <mat-icon matListItemIcon>forum</mat-icon>
+                    <span matListItemTitle>Forum</span>
+                </a>
+                @if (auth.isOwner()) {
+                    <a mat-list-item routerLink="/admin" routerLinkActive="active-link" (click)="closeSidenav()">
+                        <mat-icon
+                            matListItemIcon
+                            [matBadge]="adminService.pendingCount() > 0 ? adminService.pendingCount() : null"
+                            matBadgeColor="warn"
+                            matBadgeSize="small">
+                            admin_panel_settings
+                        </mat-icon>
+                        <span matListItemTitle>Administrator</span>
+                    </a>
+                }
             </mat-nav-list>
             <mat-divider></mat-divider>
             <mat-nav-list>
+                <a mat-list-item routerLink="/indstillinger" routerLinkActive="active-link" (click)="closeSidenav()">
+                    <mat-icon matListItemIcon>settings</mat-icon>
+                    <span matListItemTitle>Indstillinger</span>
+                </a>
                 <button mat-list-item (click)="logout()" class="logout-item">
                     <mat-icon matListItemIcon>logout</mat-icon>
                     <span matListItemTitle>Log ud</span>

@@ -35,6 +35,28 @@
   width: 7rem;
 }
 
+.reminder-channels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.recurrence-icon {
+  font-size: 1rem;
+  width: 1rem;
+  height: 1rem;
+  vertical-align: text-bottom;
+  margin-left: 0.3rem;
+  opacity: 0.6;
+}
+
+.hint-text {
+  color: var(--mat-sys-on-surface-variant, #555);
+  font-size: 0.8rem;
+  margin: -0.25rem 0 0.75rem;
+}
+
 .error-text {
   color: #b3261e;
   font-size: 0.875rem;

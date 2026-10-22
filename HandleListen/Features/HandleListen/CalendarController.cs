@@ -11,13 +11,15 @@ public class CalendarController : ControllerBase
     private readonly AppDbContext _context;
     private readonly CalendarAccessService _calendarAccess;
     private readonly AppNotifier _notifier;
+    private readonly BlockService _blockService;
     private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    public CalendarController(AppDbContext context, CalendarAccessService calendarAccess, AppNotifier notifier)
+    public CalendarController(AppDbContext context, CalendarAccessService calendarAccess, AppNotifier notifier, BlockService blockService)
     {
         _context = context;
         _calendarAccess = calendarAccess;
         _notifier = notifier;
+        _blockService = blockService;
     }
 
     [HttpGet]
@@ -109,6 +111,8 @@ public class CalendarController : ControllerBase
         var toUser = await _context.Users.FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
         if (toUser is null) return NotFound("Ingen bruger fundet med den email.");
         if (toUser.Id == UserId) return BadRequest("Du kan ikke invitere dig selv.");
+        // Pretend the recipient doesn't exist rather than revealing they've blocked the sender.
+        if (await _blockService.HasBlockedAsync(toUser.Id, UserId)) return NotFound("Ingen bruger fundet med den email.");
 
         var myCalendarId = await _calendarAccess.GetOrCreateCalendarIdAsync(UserId);
         var theirCalendarId = await _calendarAccess.GetOrCreateCalendarIdAsync(toUser.Id);

@@ -13,6 +13,7 @@ import { RecipeBookSharingService } from '../recipe-book-sharing.service';
 import { RealtimeService } from '../realtime.service';
 import { Recipe } from '../recipe';
 import { AddRecipeDialog } from '../add-recipe-dialog/add-recipe-dialog';
+import { ImportRecipeDialog } from '../import-recipe-dialog/import-recipe-dialog';
 import { RecipeCardDialog, RecipeCardDialogResult } from '../recipe-card-dialog/recipe-card-dialog';
 import { ShareRecipeBookDialog } from '../share-recipe-book-dialog/share-recipe-book-dialog';
 
@@ -98,6 +99,20 @@ export class Opskrifter implements OnInit {
         // The backend's realtime "RecipesChanged" broadcast also reaches this same client
         // and may already have refreshed the grid via refreshRecipes() by the time this
         // callback runs - guard against appending the same recipe twice.
+        this.recipes.update(recipes => recipes.some(r => r.id === created.id) ? recipes : [...recipes, created]);
+      }
+    });
+  }
+
+  openImportRecipe() {
+    const dialogRef = this.dialog.open(ImportRecipeDialog, {
+      width: '560px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+    });
+
+    dialogRef.afterClosed().subscribe((created?: Recipe) => {
+      if (created) {
         this.recipes.update(recipes => recipes.some(r => r.id === created.id) ? recipes : [...recipes, created]);
       }
     });

@@ -1,0 +1,25 @@
+.policy-page {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  line-height: 1.6;
+}
+
+.updated {
+  color: var(--mat-sys-on-surface-variant, #666);
+  font-size: 0.875rem;
+  margin-top: -0.5rem;
+}
+
+h2 {
+  margin-top: 1.75rem;
+  font-size: 1.1rem;
+}
+
+ul {
+  padding-left: 1.25rem;
+}
+
+li {
+  margin-bottom: 0.4rem;
+}

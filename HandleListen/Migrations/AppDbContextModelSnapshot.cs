@@ -14,7 +14,29 @@ namespace HandleListen.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.9");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.13");
+
+            modelBuilder.Entity("BlockedUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("BlockedUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BlockerUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlockerUserId", "BlockedUserId")
+                        .IsUnique();
+
+                    b.ToTable("BlockedUsers");
+                });
 
             modelBuilder.Entity("Calendar", b =>
                 {
@@ -43,6 +65,15 @@ namespace HandleListen.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("EmailReminderEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("PushReminderEnabled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Recurrence")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("ReminderUnit")
                         .HasColumnType("INTEGER");
 
@@ -61,6 +92,26 @@ namespace HandleListen.Migrations
                     b.HasIndex("CalendarId");
 
                     b.ToTable("CalendarEvents");
+                });
+
+            modelBuilder.Entity("CalendarEventException", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CalendarEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("ExceptionDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalendarEventId", "ExceptionDate")
+                        .IsUnique();
+
+                    b.ToTable("CalendarEventExceptions");
                 });
 
             modelBuilder.Entity("CalendarInvite", b =>
@@ -106,6 +157,96 @@ namespace HandleListen.Migrations
                     b.ToTable("CalendarMembers");
                 });
 
+            modelBuilder.Entity("DigestDelivery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("SentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Frequency", "SentDate")
+                        .IsUnique();
+
+                    b.ToTable("DigestDeliveries");
+                });
+
+            modelBuilder.Entity("DigestPreference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("DigestPreferences");
+                });
+
+            modelBuilder.Entity("EmailReminderDelivery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CalendarEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly>("OccurrenceDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalendarEventId", "OccurrenceDate", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("EmailReminderDeliveries");
+                });
+
+            modelBuilder.Entity("ForumSearchLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Query")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("SearchedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ForumSearchLogs");
+                });
+
             modelBuilder.Entity("KnownItem", b =>
                 {
                     b.Property<int>("Id")
@@ -149,6 +290,40 @@ namespace HandleListen.Migrations
                     b.HasIndex("KnownItemId");
 
                     b.ToTable("KnownItemAliases");
+                });
+
+            modelBuilder.Entity("KnownItemRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastSeenAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RequestedByUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Resolved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SeenCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SourceDescription")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("KnownItemRequests");
                 });
 
             modelBuilder.Entity("MealPlan", b =>
@@ -382,6 +557,142 @@ namespace HandleListen.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Plan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateOnly?>("ActivatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("DayCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Month")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans");
+                });
+
+            modelBuilder.Entity("PlanGuest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("PlanGuests");
+                });
+
+            modelBuilder.Entity("PlanTodo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("DayIndex")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("DayOfMonth")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("Done")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PlanId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<TimeOnly?>("Time")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlanId");
+
+                    b.ToTable("PlanTodos");
+                });
+
+            modelBuilder.Entity("PrivacyPolicyAcceptance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("AcceptedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PrivacyPolicyAcceptances");
+                });
+
+            modelBuilder.Entity("PushSubscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("PushSubscriptions");
+                });
+
             modelBuilder.Entity("Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -514,6 +825,118 @@ namespace HandleListen.Migrations
                     b.ToTable("RecipeTags");
                 });
 
+            modelBuilder.Entity("ReminderDelivery", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CalendarEventId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastSentAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateOnly>("OccurrenceDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalendarEventId", "OccurrenceDate", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("ReminderDeliveries");
+                });
+
+            modelBuilder.Entity("SharedRecipe", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AddedCount")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("OriginalRecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("SharedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SharedByUserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SharedRecipes");
+                });
+
+            modelBuilder.Entity("SharedRecipeIngredient", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SharedRecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Unit")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SharedRecipeId");
+
+                    b.ToTable("SharedRecipeIngredients");
+                });
+
+            modelBuilder.Entity("SharedRecipeTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SharedRecipeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SharedRecipeId");
+
+                    b.ToTable("SharedRecipeTags");
+                });
+
             modelBuilder.Entity("ShoppingItem", b =>
                 {
                     b.Property<int>("Id")
@@ -593,11 +1016,29 @@ namespace HandleListen.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CalendarEventException", b =>
+                {
+                    b.HasOne("CalendarEvent", null)
+                        .WithMany()
+                        .HasForeignKey("CalendarEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CalendarMember", b =>
                 {
                     b.HasOne("Calendar", null)
                         .WithMany()
                         .HasForeignKey("CalendarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EmailReminderDelivery", b =>
+                {
+                    b.HasOne("CalendarEvent", null)
+                        .WithMany()
+                        .HasForeignKey("CalendarEventId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -677,6 +1118,24 @@ namespace HandleListen.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PlanGuest", b =>
+                {
+                    b.HasOne("Plan", null)
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PlanTodo", b =>
+                {
+                    b.HasOne("Plan", null)
+                        .WithMany()
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("RecipeBookMember", b =>
                 {
                     b.HasOne("RecipeBook", null)
@@ -700,6 +1159,33 @@ namespace HandleListen.Migrations
                     b.HasOne("Recipe", null)
                         .WithMany()
                         .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ReminderDelivery", b =>
+                {
+                    b.HasOne("CalendarEvent", null)
+                        .WithMany()
+                        .HasForeignKey("CalendarEventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SharedRecipeIngredient", b =>
+                {
+                    b.HasOne("SharedRecipe", null)
+                        .WithMany()
+                        .HasForeignKey("SharedRecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SharedRecipeTag", b =>
+                {
+                    b.HasOne("SharedRecipe", null)
+                        .WithMany()
+                        .HasForeignKey("SharedRecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

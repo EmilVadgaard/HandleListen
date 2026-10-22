@@ -1,0 +1,23 @@
+<h1 class="page-title">Planer</h1>
+
+<div class="plan-rows">
+    <mat-card class="plan-row add-row" (click)="openAddPlan()">
+        <mat-icon class="add-icon">add</mat-icon>
+        <span>Ny plan</span>
+    </mat-card>
+
+    @for (plan of plans(); track plan.id) {
+        <mat-card class="plan-row" (click)="openPlan(plan)">
+            <span class="plan-name">{{ plan.name }}</span>
+            <mat-chip-set>
+                <mat-chip>{{ typeLabel(plan.type) }}</mat-chip>
+                @if (plan.isActive) {
+                    <mat-chip class="active-chip">Aktiv</mat-chip>
+                }
+            </mat-chip-set>
+            @if (!plan.isOwner) {
+                <span class="plan-owner">Delt af {{ plan.ownerEmail }}</span>
+            }
+        </mat-card>
+    }
+</div>

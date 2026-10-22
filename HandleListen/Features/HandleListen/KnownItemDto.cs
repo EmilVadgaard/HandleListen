@@ -10,4 +10,10 @@ public record CreateKnownItemRequest(string Name, string Category, UnitOfMeasure
 
 public record AddAliasRequest(string Alias);
 
+public record KnownItemAliasDto(int Id, string Alias);
+
+public record KnownItemAdminDto(int Id, string CanonicalName, string Category, UnitOfMeasure? DefaultUnit, List<KnownItemAliasDto> Aliases);
+
+public record UpdateKnownItemRequest(string CanonicalName, string Category, UnitOfMeasure? DefaultUnit);
+
 public record MeDto(string Email, List<string> Roles);

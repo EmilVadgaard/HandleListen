@@ -37,7 +37,7 @@ public class ShoppingItemController : ControllerBase
         _context.ShoppingItems.Add(item);
         await _context.SaveChangesAsync();
         await _notifier.NotifyItemsChanged(item.ShoppingListId);
-        return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
+        return StatusCode(201, item);
     }
 
     private async Task<int> GetOrCreateDefaultListIdAsync()
@@ -52,15 +52,6 @@ public class ShoppingItemController : ControllerBase
         _context.ShoppingLists.Add(list);
         await _context.SaveChangesAsync();
         return list.Id;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<ShoppingItem>>> GetAll()
-    {
-        return await _context.ShoppingItems
-            .Where(x => x.shoppingList.UserId == UserId || _context.ShoppingListGuests.Any(g => g.ShoppingListId == x.ShoppingListId && g.UserId == UserId))
-            .OrderBy(x => x.Name)
-            .ToListAsync();
     }
 
     [HttpGet("by-list/{shoppingListId}")]
@@ -105,15 +96,4 @@ public class ShoppingItemController : ControllerBase
         await _notifier.NotifyItemsChanged(listId);
         return NoContent();
     }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ShoppingItem>> GetById(int id)
-    {
-        var item = await _context.ShoppingItems
-            .Where(x => x.shoppingList.UserId == UserId || _context.ShoppingListGuests.Any(g => g.ShoppingListId == x.ShoppingListId && g.UserId == UserId))
-            .FirstOrDefaultAsync(x => x.Id == id);
-        if (item == null) return NotFound();
-        return item;
-    }
-
 }

@@ -1,0 +1,63 @@
+@if (loading()) {
+  <mat-dialog-content class="loading-content">
+    <mat-spinner diameter="32"></mat-spinner>
+  </mat-dialog-content>
+} @else if (recipe()) {
+  <h2 mat-dialog-title>{{ recipe()!.title }}</h2>
+
+  <mat-dialog-content>
+    <p class="meta-text">Delt af {{ recipe()!.sharedByEmail }} · tilføjet {{ recipe()!.addedCount }} gange</p>
+
+    @if (recipe()!.tags.length > 0) {
+      <mat-chip-set class="tags-row">
+        @for (tag of recipe()!.tags; track tag) {
+          <mat-chip>{{ tag }}</mat-chip>
+        }
+      </mat-chip-set>
+    }
+
+    <h3 class="section-heading">Fremgangsmåde</h3>
+    @if (recipe()!.description) {
+      <p class="description-text">{{ recipe()!.description }}</p>
+    } @else {
+      <p class="hint-text">Ingen fremgangsmåde angivet.</p>
+    }
+
+    <h3 class="section-heading">Ingredienser</h3>
+    @if (recipe()!.ingredients.length === 0) {
+      <p class="hint-text">Ingen ingredienser angivet.</p>
+    } @else {
+      <mat-list>
+        @for (ingredient of recipe()!.ingredients; track ingredient.name) {
+          <mat-list-item>
+            <span matListItemTitle>
+              {{ ingredient.quantity }}x {{ ingredient.name }}
+              @if (ingredient.amount) {
+                <span class="amount-text">— {{ ingredient.amount }} {{ unitLabels[ingredient.unit!] }}</span>
+              }
+            </span>
+          </mat-list-item>
+        }
+      </mat-list>
+    }
+
+    @if (error()) {
+      <p class="error-text">{{ error() }}</p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Luk</button>
+    <button
+      mat-flat-button
+      color="primary"
+      [disabled]="adding() || added()"
+      (click)="addToMyBook()">
+      @if (added()) {
+        Tilføjet ✓
+      } @else {
+        Tilføj til min opskriftsbog
+      }
+    </button>
+  </mat-dialog-actions>
+}

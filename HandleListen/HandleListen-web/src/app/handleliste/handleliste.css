@@ -124,6 +124,26 @@
   gap: 0.1rem;
 }
 
+.item-row-editing {
+  height: auto;
+  padding: 0.5rem 0;
+}
+
+.edit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.edit-name-field {
+  flex: 2 1 10rem;
+}
+
+.edit-category-field {
+  flex: 1 1 8rem;
+}
+
 .quantity-value {
   min-width: 1.5rem;
   text-align: center;

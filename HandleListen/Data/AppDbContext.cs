@@ -23,6 +23,22 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     public DbSet<RecipeBookInvite> RecipeBookInvites => Set<RecipeBookInvite>();
     public DbSet<MealPlan> MealPlans => Set<MealPlan>();
     public DbSet<MealPlanRecipe> MealPlanRecipes => Set<MealPlanRecipe>();
+    public DbSet<PushSubscription> PushSubscriptions => Set<PushSubscription>();
+    public DbSet<ReminderDelivery> ReminderDeliveries => Set<ReminderDelivery>();
+    public DbSet<SharedRecipe> SharedRecipes => Set<SharedRecipe>();
+    public DbSet<SharedRecipeIngredient> SharedRecipeIngredients => Set<SharedRecipeIngredient>();
+    public DbSet<SharedRecipeTag> SharedRecipeTags => Set<SharedRecipeTag>();
+    public DbSet<ForumSearchLog> ForumSearchLogs => Set<ForumSearchLog>();
+    public DbSet<KnownItemRequest> KnownItemRequests => Set<KnownItemRequest>();
+    public DbSet<CalendarEventException> CalendarEventExceptions => Set<CalendarEventException>();
+    public DbSet<EmailReminderDelivery> EmailReminderDeliveries => Set<EmailReminderDelivery>();
+    public DbSet<DigestPreference> DigestPreferences => Set<DigestPreference>();
+    public DbSet<DigestDelivery> DigestDeliveries => Set<DigestDelivery>();
+    public DbSet<BlockedUser> BlockedUsers => Set<BlockedUser>();
+    public DbSet<PrivacyPolicyAcceptance> PrivacyPolicyAcceptances => Set<PrivacyPolicyAcceptance>();
+    public DbSet<Plan> Plans => Set<Plan>();
+    public DbSet<PlanGuest> PlanGuests => Set<PlanGuest>();
+    public DbSet<PlanTodo> PlanTodos => Set<PlanTodo>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -37,6 +53,22 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
         builder.Entity<ShoppingListGuest>()
             .HasIndex(g => new { g.ShoppingListId, g.UserId })
             .IsUnique();
+
+        builder.Entity<PlanGuest>()
+            .HasOne<Plan>()
+            .WithMany()
+            .HasForeignKey(g => g.PlanId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<PlanGuest>()
+            .HasIndex(g => new { g.PlanId, g.UserId })
+            .IsUnique();
+
+        builder.Entity<PlanTodo>()
+            .HasOne<Plan>()
+            .WithMany()
+            .HasForeignKey(t => t.PlanId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<CalendarMember>()
             .HasOne<Calendar>()
@@ -96,6 +128,64 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
             .HasOne<Recipe>()
             .WithMany()
             .HasForeignKey(mpr => mpr.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<PushSubscription>()
+            .HasIndex(s => s.Token)
+            .IsUnique();
+
+        builder.Entity<ReminderDelivery>()
+            .HasOne<CalendarEvent>()
+            .WithMany()
+            .HasForeignKey(d => d.CalendarEventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ReminderDelivery>()
+            .HasIndex(d => new { d.CalendarEventId, d.OccurrenceDate, d.UserId })
+            .IsUnique();
+
+        builder.Entity<CalendarEventException>()
+            .HasOne<CalendarEvent>()
+            .WithMany()
+            .HasForeignKey(e => e.CalendarEventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<CalendarEventException>()
+            .HasIndex(e => new { e.CalendarEventId, e.ExceptionDate })
+            .IsUnique();
+
+        builder.Entity<EmailReminderDelivery>()
+            .HasOne<CalendarEvent>()
+            .WithMany()
+            .HasForeignKey(d => d.CalendarEventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<EmailReminderDelivery>()
+            .HasIndex(d => new { d.CalendarEventId, d.OccurrenceDate, d.UserId })
+            .IsUnique();
+
+        builder.Entity<DigestPreference>()
+            .HasIndex(p => p.UserId)
+            .IsUnique();
+
+        builder.Entity<DigestDelivery>()
+            .HasIndex(d => new { d.UserId, d.Frequency, d.SentDate })
+            .IsUnique();
+
+        builder.Entity<BlockedUser>()
+            .HasIndex(b => new { b.BlockerUserId, b.BlockedUserId })
+            .IsUnique();
+
+        builder.Entity<SharedRecipeIngredient>()
+            .HasOne<SharedRecipe>()
+            .WithMany()
+            .HasForeignKey(i => i.SharedRecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<SharedRecipeTag>()
+            .HasOne<SharedRecipe>()
+            .WithMany()
+            .HasForeignKey(t => t.SharedRecipeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

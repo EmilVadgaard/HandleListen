@@ -11,13 +11,15 @@ public class RecipeBookController : ControllerBase
     private readonly AppDbContext _context;
     private readonly RecipeBookAccessService _bookAccess;
     private readonly AppNotifier _notifier;
+    private readonly BlockService _blockService;
     private string UserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    public RecipeBookController(AppDbContext context, RecipeBookAccessService bookAccess, AppNotifier notifier)
+    public RecipeBookController(AppDbContext context, RecipeBookAccessService bookAccess, AppNotifier notifier, BlockService blockService)
     {
         _context = context;
         _bookAccess = bookAccess;
         _notifier = notifier;
+        _blockService = blockService;
     }
 
     [HttpGet]
@@ -127,6 +129,8 @@ public class RecipeBookController : ControllerBase
         var toUser = await _context.Users.FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
         if (toUser is null) return NotFound("Ingen bruger fundet med den email.");
         if (toUser.Id == UserId) return BadRequest("Du kan ikke invitere dig selv.");
+        // Pretend the recipient doesn't exist rather than revealing they've blocked the sender.
+        if (await _blockService.HasBlockedAsync(toUser.Id, UserId)) return NotFound("Ingen bruger fundet med den email.");
 
         var myBookId = await _bookAccess.GetOrCreateRecipeBookIdAsync(UserId);
         var theirBookId = await _bookAccess.GetOrCreateRecipeBookIdAsync(toUser.Id);
