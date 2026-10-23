@@ -104,6 +104,11 @@ export class DayEventsDialog {
     }
   }
 
+  onTimeInput(value: string) {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    this.time = digits.length > 2 ? `${digits.slice(0, 2)}:${digits.slice(2)}` : digits;
+  }
+
   save() {
     if (!this.title.trim()) return;
 
