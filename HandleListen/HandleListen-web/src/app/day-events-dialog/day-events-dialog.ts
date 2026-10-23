@@ -42,7 +42,9 @@ export class DayEventsDialog {
   // date instead would silently move the series' anchor, corrupting a clamped day (e.g. editing
   // the Feb 28 instance of a "day 31, every month" series would permanently turn it into a
   // "day 28" series).
-  private anchorDate = '';
+  // Initialized from the clicked day so a brand-new "Nyt event" save works even if the user
+  // never triggers startAdd()/startEdit() first (e.g. the day had no existing events to edit).
+  private anchorDate = this.data.date;
   title = '';
   description = '';
   allDay = true;

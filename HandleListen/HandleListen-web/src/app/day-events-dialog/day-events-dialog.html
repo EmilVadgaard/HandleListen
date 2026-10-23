@@ -51,8 +51,8 @@
 
   @if (!allDay) {
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Tidspunkt (tt:mm)</mat-label>
-      <input matInput type="text" placeholder="f.eks. 14:30" maxlength="5" [(ngModel)]="time" name="time" />
+      <mat-label>Tidspunkt</mat-label>
+      <input matInput type="time" [(ngModel)]="time" name="time" />
     </mat-form-field>
   }
 
