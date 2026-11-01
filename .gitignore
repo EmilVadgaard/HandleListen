@@ -11,6 +11,10 @@
 firebase-service-account*.json
 google-services.json
 
+# Local-machine-only transfer package: SSH key + production secrets + setup notes.
+# Never commit this folder - it's meant to be zipped and carried between your own devices only.
+/local-only/
+
 # User-specific files
 *.rsuser
 *.suo
