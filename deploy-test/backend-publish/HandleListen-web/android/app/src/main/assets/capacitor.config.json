@@ -1,0 +1,9 @@
+{
+	"appId": "dk.emilvadgaardnielsen.handleliste",
+	"appName": "HandleListen",
+	"webDir": "dist/HandleListen-web/browser",
+	"server": {
+		"url": "https://emilvadgaardnielsen.dk",
+		"cleartext": false
+	}
+}

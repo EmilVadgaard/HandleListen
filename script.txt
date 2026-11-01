@@ -1,0 +1,2 @@
+sudo rm -rf /var/www/handlelisten/*
+sudo cp -r /home/emil/frontend-new/* /var/www/handlelisten/
